@@ -1,0 +1,53 @@
+body {
+  font-family: Courier, 'Courier New', sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  max-width: 38rem;
+}
+.a4 {
+  width: 8.27in;
+  height: 11.69in;
+}
+
+  .page {
+  background-color: white;
+  margin-left: 1.5in;
+  margin-right: 1in;
+  margin-top: 1in;
+  margin-bottom: 1in;
+  border: 1px solid black;
+  box-shadow: 2px 2px;
+}
+
+.action {
+  font-style: italic;
+  margin-top: 20px;
+}
+
+.character {
+  text-transform: uppercase;
+  margin-top: 20px;
+}
+
+.dialogue {
+}
+
+.parenthetical {
+  margin-left: 1.5in;
+
+}
+
+.clip {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+
+.transition {
+  text-transform: uppercase;
+}
+
+.scene {
+  font-weight: bold;
+}
