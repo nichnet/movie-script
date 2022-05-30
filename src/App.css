@@ -1,0 +1,60 @@
+body {
+  font-family: Courier,'Courier New', sans-serif;
+  font-size: 12px;
+  background-color: rgb(211, 211, 211);
+}
+
+.page {
+  background-color: white;
+  border: 1px solid black;
+  box-shadow: 2px 2px;
+  margin: auto;
+  margin-top: 40px;
+  padding-top: 1in;
+  padding-bottom: 2in;
+
+}
+
+.letter {
+  max-width: 8.5in;
+  max-height: 11in;
+  height: 11in;
+  width: 8.5in;
+}
+
+.page-content {
+  margin-left: 1.5in;
+  margin-right: 1in;
+}
+
+.action {
+  font-style: italic;
+}
+
+.character {
+  margin-left: 2.2in;
+  text-transform: uppercase;
+}
+
+.dialogue {
+  margin-left: 1.5in;
+}
+
+.parenthetical {
+  margin-left: 1.6in;
+
+}
+
+.clip {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+
+.transition {
+  text-transform: uppercase;
+}
+
+.scene {
+  font-weight: bold;
+}
