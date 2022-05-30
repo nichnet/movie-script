@@ -1,87 +1,46 @@
 import { Component } from "react";
+import Clip from "./ClipComponent";
+import Scene from "./SceneComponent";
+import Action from "./ActionComponent";
+import Dialogue from "./DialogueComponent";
+import Transition from "./TransitionComponent";
+import Header from "./HeaderComponent";
 
 
 class Page extends Component {
 
+    constructor(props) {
+        super(props);
+    }
 
     render() {
-
-        const data = [
-            {
-                "type": "clip",
-                "value": "CLIP NUMBER m15 s05 t05 050"
-            }, 
-            {
-                "type": "scene",
-                "value": "INT. MEDICAL ASSESSMENT UNIT - DAY - SD2"
-            }, 
-            {
-                "type": "action",
-                "value": "Following on from Clip 5. Steve in the bed, Elaine sitting beside it, the Nurse arives as the bedside."
-            }, 
-            {
-                "type": "dialogue",
-                "character": "Nurse",
-                "parenthetical": "Friendly and energised", 
-                "value": "Hello. How's the patient?"
-            }, 
-            {
-                "type": "dialogue",
-                "character": "Elaine",
-                "value": "He keeps saying 'Please' over and over."
-            }, 
-            {
-                "type": "dialogue",
-                "character": "Nurse",
-                "value": "What is it you want, Steve?"
-            }, 
-            {
-                "type": "action",
-                "value": "The nurse points at the glass of water, Steve shakes his head. Steve points at the bed."
-            },
-            {
-                "type": "dialogue",
-                "character":"Nurse",
-                "value": "Here?"
-            }, 
-            {
-                "type": "action",
-                "value": "Steve nods."
-            }
-        ]
-
+        var sceneIndex = 0;
 
         return(
             <div className="page letter">
                 <div className="page-content">
+                    <Header page={this.props.data.page}/>
+
                     {
-                        data.map((e) => {
+                        this.props.data.content.map((e) => {
                             switch(e.type) {
                                 case "clip":
-                                    return (<p className="clip">{e.value}</p>);
+                                    return ( <Clip value={e.value}/> );
 
                                 case "scene":
-                                    return (<p className="scene">{e.value}</p>);
+                                    sceneIndex++;
+                                    return ( <Scene index={sceneIndex} value={e.value}/> );
+
+                                case "transition":
+                                    return ( <Transition value={e.value}/> );
 
                                 case "action":
-                                    return (<p className="action">{e.value}</p>);
+                                    return ( <Action value={e.value}/> );
 
                                 case "dialogue":
-                                    return (
-                                        <>
-                                            <p className="character">{e.character}</p>
-                                            {
-                                                e.parenthetical !== null ?
-                                                    <></> : 
-                                                <p className="parenthetical">{e.parenthetical}</p>
-                                            }
-                                            <p className="dialogue">{e.value}</p>
-                                        </>
-                                    );
-                                    break;
+                                    return ( <Dialogue value={e}/> );
                             }
                         })
-
                     }
                 </div>
             </div>
