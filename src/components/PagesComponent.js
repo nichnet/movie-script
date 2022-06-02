@@ -23,9 +23,9 @@ function Pages({pages}) {
         dragNode.current  = e.target;
         dragNode.current.addEventListener('dragend', handleDragEnd);
 
-//        setTimeout(() => {
+        setTimeout(() => {
             setDragging(true);//set dragging state in an asynchronous manner to fix stylgin.
-  //      }, 0);
+        }, 0);
 
     }
 
@@ -102,7 +102,7 @@ function Pages({pages}) {
         }
       }
 
-    const createContent = (page, pageIndex) => {
+    const createPageContent = (page, pageIndex) => {
         return (
             <div 
                             
@@ -145,19 +145,15 @@ function Pages({pages}) {
     }
 
     return(
-        <Row className="">
-            {
-                list.map((page, pageIndex) => (
-                    <div key={page.page_number} className="page letter">
-                        <Header value={page.page_number}/>
-                        {
-                            createContent(page, pageIndex)
-                        }
-                        <Footer/>
-                    </div>
-                ))
-            }
-        </Row>
+        list.map((page, pageIndex) => (
+            <div key={page.page_number} className="page letter">
+                <Header value={page.page_number}/>
+                {
+                    createPageContent(page, pageIndex)
+                }
+                <Footer/>
+            </div>
+        ))
     )
 }
 

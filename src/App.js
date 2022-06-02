@@ -11,8 +11,12 @@ import Tab from 'react-bootstrap/Tab';
 function App() {
     return( 
         <div className="d-flex">
-                <Col xs={8} xl={10} className="workarea">
-                    <Pages pages={example_data}/>
+                <Col xs={8} xl={10}>
+                    <Row className="test5 workarea">
+                        <Pages pages={example_data}/>
+                    </Row>
+                    <Row className="test4">
+                    </Row>
                 </Col>
 
                 <Col xs={4} xl={2} className="test3">

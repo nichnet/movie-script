@@ -1,8 +1,8 @@
 .workarea {
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background-color: rgb(250, 251, 221);
+    columns: 1;
+    max-height: 100vh;
+    background-color: #e7edf0;
     overflow-y: scroll;
     margin: 0;
     padding: 0;
@@ -12,7 +12,21 @@
 /* Navigator */
 
 .test3{ 
-    background-color: green;
+    background-color: #f1f4f8;
+    height: 100vh;
+}
+
+.test4 {
+    background-color: #f1f4f8;
+    height: 20vh;
+    
+    border-top: 1px solid rgba(0, 0, 0, 0.073);
+    border-right: 1px solid rgba(0, 0, 0, 0.073);
+    margin-right: 0px;
+}
+
+.test5 {
+    height: 80vh;
 }
 
 .nav-item {
@@ -45,7 +59,7 @@
 /* Page */
 
 .page {
-    background-color: aliceblue;
+    background-color: white;
     border: 1px solid black;
     box-shadow: 4px 3px rgba(0, 0, 0, 0.185);
     margin: auto;
@@ -66,14 +80,12 @@
     margin-left: 1.5in;
     margin-right: 1in;
     height: 1in;
-    background-color: red;
 }
 
 .page-footer {
     margin-left: 1.5in;
     margin-right: 1in;
     height: 1in;
-    background-color: green;
 }
 
 
@@ -89,14 +101,12 @@
 
 .action {
     font-style: italic;
-    margin-top: 1em;
-    margin-bottom: 0;
+    margin-bottom: 1em;
 }
 
 .character {
     margin-left: 2.2in;
     margin-right: 2.2in;
-    margin-top: 1em;
     margin-bottom: 0;
     text-align: center;
     text-transform: uppercase;
@@ -107,7 +117,7 @@
     margin-left: 1.5in;
     margin-right: 1.5in;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 1em;
 }
 
 .parenthetical {
@@ -132,8 +142,7 @@
 .scene {
     font-weight: bolder;
     text-transform: uppercase;
-    margin-top: 1em;
-    margin-bottom: 0;
+    margin-bottom: 1em;
 }
 
 .page-number {
