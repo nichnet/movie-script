@@ -1,18 +1,10 @@
-import { Component } from "react";
+import React from "react";
 
-class Transition extends Component {
+function Transition({obj}) {
 
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return(
-
-            <p className="transition">{this.props.value}:</p>
-
-        );
-    }
+    return( 
+        <p className="transition">{obj.value}</p>
+    )
 }
 
 export default Transition;

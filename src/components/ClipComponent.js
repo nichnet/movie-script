@@ -1,18 +1,10 @@
-import { Component } from "react";
+import React from "react";
 
-class Clip extends Component {
+function Clip({obj}) {
 
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return(
-
-            <p className="clip">{this.props.value}</p>
-
-        );
-    }
+    return( 
+        <p className="clip">{obj.value}</p>
+    )
 }
 
 export default Clip;

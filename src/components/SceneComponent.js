@@ -1,20 +1,10 @@
-import { Component } from "react";
+import React from "react";
 
-class Scene extends Component {
+function Scene({obj}) {
 
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return(
-            <div>
-                <p className="scene">{this.props.value}</p>
-                <p>{this.props.index}</p>
-            </div>
-
-        );
-    }
+    return( 
+        <p className="scene">{obj.value}</p>
+    )
 }
 
 export default Scene;

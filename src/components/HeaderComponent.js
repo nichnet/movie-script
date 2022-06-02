@@ -8,11 +8,10 @@ class Header extends Component {
 
     render() {
         return(
-            <div className="header">
-                <p className="pagenumber">{this.props.page}</p>
+            <div className="page-header">
+                <p>{this.props.value}</p>
             </div>
-
-        );
+        )
     }
 }
 

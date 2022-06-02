@@ -1,52 +1,49 @@
-import { Component } from "react";
+import React from "react";
 
-class Dialogue extends Component {
+function Dialogue({obj}) {
 
-    constructor(props) {
-        super(props);
-    }
+    const characterLabel = () => {
 
-    render() {
+        var characterLabel = obj.character;
 
-        var characterLabel = this.props.value.character;
-
-        if(this.props.value.voiceover == true ||
-            this.props.value.offscreen == true) {
+        if(obj.voiceover == true ||
+            obj.offscreen == true) {
             
             characterLabel += " (";
             
-            if(this.props.value.voiceover == true) {
+            if(obj.voiceover == true) {
                 characterLabel += "v.o.";
             }
 
-            if(this.props.value.voiceover == true && 
-                this.props.value.offscreen == true) {
+            if(obj.voiceover == true && 
+                obj.offscreen == true) {
                characterLabel += ", ";
             }
 
-            if(this.props.value.offscreen == true) {
+            if(obj.offscreen == true) {
                 characterLabel += "o.s.";
             }
 
             characterLabel += ")";
         }
 
-        return(
-            <>
-                <p className="character">{characterLabel}</p>
-
-                {
-                    this.props.value.parenthetical !== undefined ? 
-                    <p className="parenthetical">({this.props.value.parenthetical})</p>
-                    :
-                    <></>
-                }
-
-                <p className="dialogue">{this.props.value.value}</p>
-            </>
-
-        );
+        return characterLabel;
     }
+
+    return( 
+        <>
+            <p className="character">{characterLabel()}</p>
+
+            {
+                obj.parenthetical !== undefined ? 
+                <p className="parenthetical">({obj.parenthetical})</p>
+                :
+                <></>
+            }
+
+            <p className="dialogue">{obj.value}</p>
+        </>
+    )
 }
 
 export default Dialogue;
