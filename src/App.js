@@ -3,19 +3,32 @@ import './style.css';
 import Pages from './components/PagesComponent';
 import example_data from './example_data';
 import { Col, Container, Row } from 'react-bootstrap';
-
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 
 //
 
 function App() {
     return( 
-        <div className="container-fluid d-flex">
-                <Col xs={9} xl={10} className="workarea">
+        <div className="d-flex">
+                <Col xs={8} xl={10} className="workarea">
                     <Pages pages={example_data}/>
                 </Col>
 
-                <Col xs={3} xl={2} className="test3">
+                <Col xs={4} xl={2} className="test3">
+                    <Tabs>
+                        <Tab eventKey="first" title="Scenes">
+                            <p>blah 1</p>
+                        </Tab>
 
+                        <Tab eventKey="fourth" title="Characters">
+                            <p>blah 1</p>
+                        </Tab>
+
+                        <Tab eventKey="third" title="Document">
+                            <p>blah 1</p>
+                        </Tab>
+                    </Tabs>
                 </Col>
         </div>
 

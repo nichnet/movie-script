@@ -6,6 +6,7 @@ import Clip from './ClipComponent';
 import Dialogue from './DialogueComponent';
 import Transition from './TransitionComponent';
 import { Row } from 'react-bootstrap';
+import Footer from './FooterComponent';
 
 function Pages({pages}) {
 
@@ -101,49 +102,58 @@ function Pages({pages}) {
         }
       }
 
+    const createContent = (page, pageIndex) => {
+        return (
+            <div 
+                            
+            onDragEnter = {
+                dragging && !page.content.length ? 
+                (e) => handleDragEnter(e, {pageIndex, elementIndex:  0}) 
+                :
+                null
+            }
+
+            key={page.page_number} 
+            className="page-content"
+            >
+                {
+                    page.content.map((element, elementIndex) =>(
+                        <div 
+                            draggable 
+                            onDragStart = {
+                                (e) => { 
+                                    handleDragStart(e, {pageIndex, elementIndex})
+                                }
+                            } 
+                            onDragEnter = {
+                                dragging ? 
+                                (e) => handleDragEnter(e, {pageIndex, elementIndex})
+                                : 
+                                null
+                            }
+                            
+                            key={page.page_number + ":" + elementIndex} 
+                            className={dragging ? getDraggingStyles({pageIndex, elementIndex}) : "dnd-item"}>
+                                {
+                                    renderSwitch(element)
+                                }
+                            </div>
+                    ))
+                }
+            </div> 
+        );
+    }
+
     return(
         <Row className="">
             {
                 list.map((page, pageIndex) => (
                     <div key={page.page_number} className="page letter">
                         <Header value={page.page_number}/>
-                        <div 
-                        
-                        onDragEnter = {
-                            dragging && !page.content.length ? 
-                            (e) => handleDragEnter(e, {pageIndex, elementIndex:  0}) 
-                            :
-                            null
+                        {
+                            createContent(page, pageIndex)
                         }
-
-                        key={page.page_number} 
-                        className="page-content"
-                        >
-                            {
-                                page.content.map((element, elementIndex) =>(
-                                    <div 
-                                        draggable 
-                                        onDragStart = {
-                                            (e) => { 
-                                                handleDragStart(e, {pageIndex, elementIndex})
-                                            }
-                                        } 
-                                        onDragEnter = {
-                                            dragging ? 
-                                            (e) => handleDragEnter(e, {pageIndex, elementIndex})
-                                            : 
-                                            null
-                                        }
-                                        
-                                        key={page.page_number + ":" + elementIndex} 
-                                        className={dragging ? getDraggingStyles({pageIndex, elementIndex}) : "dnd-item"}>
-                                            {
-                                                renderSwitch(element)
-                                            }
-                                        </div>
-                                ))
-                            }
-                        </div> 
+                        <Footer/>
                     </div>
                 ))
             }

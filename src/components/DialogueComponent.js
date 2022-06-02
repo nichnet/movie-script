@@ -30,18 +30,44 @@ function Dialogue({obj}) {
         return characterLabel;
     }
 
-    return( 
+    const create = (parenthetical, value) => {
+        return (
+            <>
+                {
+                    parenthetical !== undefined ? 
+                    <p className="parenthetical">({parenthetical})</p>
+                    :
+                    null
+                }
+                <p className="dialogue">{value}</p>
+            </>
+        );
+    }
+/*
+
+
+*/
+
+    const createDialogue = () => {
+
+        if(typeof obj.value === "string") {
+            return create(obj.parenthetical !== undefined ? obj.parenthetical : undefined, obj.value);
+        } else {
+            //array
+            return (
+                obj.value.map((o) => {
+                    return create(o.parenthetical !== undefined ? o.parenthetical : undefined, o.value)
+                })
+            );
+        }
+    }
+
+    return ( 
         <>
             <p className="character">{characterLabel()}</p>
-
             {
-                obj.parenthetical !== undefined ? 
-                <p className="parenthetical">({obj.parenthetical})</p>
-                :
-                <></>
+                createDialogue()
             }
-
-            <p className="dialogue">{obj.value}</p>
         </>
     )
 }
