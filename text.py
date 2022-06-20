@@ -3,7 +3,10 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QFont, QDrag, QPixmap
 from constants import *
 
+
 font = QFont('Courier', 12)
+
+
 
 
 class Text(QLabel):
@@ -39,9 +42,9 @@ class Text(QLabel):
         text_type_margin = page_rule.get("margin", {"left": 0, "right": 0, "top": 0, "bottom": 0})
         content_width = page_formats.get("letter").get("width") - page_content_margin.get("left", 0) - page_content_margin.get("right", 0)
         
-        x = convert_inches_to_pixels(get_dpi(), text_type_margin.get("left", 0) )
-        y = self.line * LINE_HEIGHT + convert_inches_to_pixels(get_dpi(), text_type_margin.get("top", 0) )
-        width = convert_inches_to_pixels(get_dpi(), content_width - text_type_margin.get("left", 0) - text_type_margin.get("right", 0) )
+        x = convert_inches_to_pixels(text_type_margin.get("left", 0) )
+        y = self.line * LINE_HEIGHT + convert_inches_to_pixels(text_type_margin.get("top", 0) )
+        width = convert_inches_to_pixels(content_width - text_type_margin.get("left", 0) - text_type_margin.get("right", 0) )
         self.setFixedWidth(width)
         
 
@@ -76,6 +79,8 @@ class Text(QLabel):
 
     def mousePressEvent (self, event):
         print("clicked!")
+        global win
+        win.editor.setValue(self.getText())
 
 
     def mouseMoveEvent(self, e):

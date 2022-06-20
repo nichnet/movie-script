@@ -15,11 +15,11 @@ class Page(QFrame):
 
         page_format = page_formats.get("letter")
         page_margin_rule = page_rules.get("page").get("margin")
-        self.PAGE_WIDTH = convert_inches_to_pixels(get_dpi(), page_format.get("width"))
-        self.PAGE_HEIGHT = convert_inches_to_pixels(get_dpi(), page_format.get("height"))
-        self.HEADER_HEIGHT = convert_inches_to_pixels(get_dpi(), page_margin_rule.get("top"))
-        self.MARGIN_LEFT = convert_inches_to_pixels(get_dpi(), page_margin_rule.get("left"))
-        self.MARGIN_RIGHT = convert_inches_to_pixels(get_dpi(), page_margin_rule.get("right"))
+        self.PAGE_WIDTH = convert_inches_to_pixels(page_format.get("width"))
+        self.PAGE_HEIGHT = convert_inches_to_pixels(page_format.get("height"))
+        self.HEADER_HEIGHT = convert_inches_to_pixels(page_margin_rule.get("top"))
+        self.MARGIN_LEFT = convert_inches_to_pixels(page_margin_rule.get("left"))
+        self.MARGIN_RIGHT = convert_inches_to_pixels(page_margin_rule.get("right"))
 
         self.initUI()
 

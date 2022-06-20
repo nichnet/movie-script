@@ -33,7 +33,6 @@ class WorkArea(QScrollArea):
         self.container = QWidget()
 
         self.vbox = QVBoxLayout(self.container)
-        self.vbox.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTop)
         
     def setContent(self, content):
         current_lines = 0
@@ -91,7 +90,7 @@ class WorkArea(QScrollArea):
             if pos.x() < w.x() + w.size().width() // 2:
                 # We didn't drag past this widget.
                 # insert to the left of it.
-                self.blayout.insertWidget(n-1, widget)
+                self.vbox.insertWidget(n-1, widget)
                 break
 
         e.accept()

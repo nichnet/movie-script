@@ -8,6 +8,7 @@ from constants import *
 from window import Window 
 
 
+win = None
 
 def init_dpi(app):
     screen = app.screens()[0]
@@ -18,6 +19,7 @@ def main():
     
     init_dpi(app)
 
+    global win
     win = Window()
     win.setWorkareaContent(content)
 

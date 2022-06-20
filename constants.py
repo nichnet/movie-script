@@ -1,5 +1,5 @@
-WIDTH = 1200
-HEIGHT = 960
+WIDTH = 1600
+HEIGHT = 980
 LINE_HEIGHT = 16
 MAX_LINES_PER_PAGE = 55
 
@@ -13,8 +13,8 @@ def get_dpi():
     global dpi
     return dpi
 
-def convert_inches_to_pixels(_dpi, inch):
-    return _dpi * inch
+def convert_inches_to_pixels(inch):
+    return get_dpi() * inch
 
 
 page_formats = {
