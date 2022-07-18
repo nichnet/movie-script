@@ -13,6 +13,7 @@ python main.py
 ## Features
 - Drag-and-drop screnplay elements,
 - Print to PDF, 
+- Number scene changes, 
 
 
 ## TODO
