@@ -11,7 +11,7 @@ python main.py
 ```
 
 ## Features
-- Drag-and-drop screnplay elements,
+- Drag-and-drop screnplay elements (such as character dialogue, actions, transitions, scenes, etc),
 - Print to PDF, 
 
 
