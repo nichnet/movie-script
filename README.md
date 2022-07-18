@@ -21,6 +21,7 @@ python main.py
 - Modify existing elements,
 - Number scene changes, 
 - Include O.S., V.O. choices in character dialogue,
+- Editor (page view) zoom control, 
 
 
 ## Contributing
