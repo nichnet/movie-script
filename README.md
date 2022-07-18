@@ -13,12 +13,14 @@ python main.py
 ## Features
 - Drag-and-drop screnplay elements,
 - Print to PDF, 
-- Number scene changes, 
+
 
 
 ## TODO
 - Save/Load project file,
 - Modify existing elements,
+- Number scene changes, 
+- Include O.S., V.O. choices in character dialogue,
 
 
 ## Contributing
