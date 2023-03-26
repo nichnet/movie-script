@@ -1,10 +1,13 @@
-from PyQt5.QtWidgets import *
 import sys
+import ctypes
 from functools import partial
-#from examplescript import content
+
 from constants import *
 
+from PyQt5.QtWidgets import *
 from window import Window 
+
+myappid = 'com.nichnet.inkwell.100' # arbitrary string
 
 
 win = None
@@ -14,7 +17,10 @@ def init_dpi(app):
     set_dpi(screen.physicalDotsPerInch())
 
 def main():
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)  
+
     app = QApplication(sys.argv)
+
     
     init_dpi(app)
 

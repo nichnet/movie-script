@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import QSize
 from constants import *
 
 from workarea import WorkArea
@@ -9,6 +10,7 @@ class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
 
+
         self.initUI()
 
     def initUI(self):
@@ -17,13 +19,16 @@ class Window(QMainWindow):
         self.setWindowTitle("Inkwell - New")
 
 
-        #set icon
+        #application icon
         icon = QIcon()
         pixmap = QPixmap("resources/draw_ink.png")
         icon.addPixmap(pixmap)
+        #app.setWindowIcon(app_icon)
 
-        # Set the window icon
+        # Set window icon
         self.setWindowIcon(icon)
+
+       
 
 
         self.editor = Editor(self)
