@@ -11,10 +11,8 @@ class Page(QFrame):
         self.parent = parent
         self.page_number = page_number
 
-        print(get_dpi())
-
         page_format = page_formats.get("letter")
-        page_margin_rule = page_rules.get("page").get("margin")
+        page_margin_rule = page_rules.get(ElementType.PAGE).get("margin")
         self.PAGE_WIDTH = convert_inches_to_pixels(page_format.get("width"))
         self.PAGE_HEIGHT = convert_inches_to_pixels(page_format.get("height"))
         self.HEADER_HEIGHT = convert_inches_to_pixels(page_margin_rule.get("top"))
@@ -54,9 +52,10 @@ class Page(QFrame):
         self.footer.setStyleSheet('background-color: transparent')
 
     
-    def add_body_element(self, line, element):
-        text = Text(self.body, line, element)
+    def add_body_element(self, line, element, lastBottom):
+        text = Text(self.body, line, element, lastBottom)
         return text
 
     def add_header_element(self, line, element):
         text = Text(self.header, line, element)
+        return text

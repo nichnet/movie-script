@@ -7,19 +7,21 @@ from constants import *
 font = QFont('Courier', 12)
 
 
-
-
 class Text(QLabel):
-    def __init__(self, parent, line, element):
+
+    def getBottom(self):
+        return self.y + self.size().height()
+         
+    def __init__(self, parent, line, element, lastBottom = 0):
         super(Text, self).__init__(parent)
 
         self.parent = parent
         self.line = line
         self.element = element
         
-        self.initUI()
+        self.initUI(lastBottom)
 
-    def initUI(self):
+    def initUI(self, lastBottom):
         self.setWordWrap(True)
         self.setFont(font)
 
@@ -38,18 +40,22 @@ class Text(QLabel):
         self.updateStyleSheet("transparent")
 
 
-        page_content_margin = page_rules.get("page").get("margin")#["page"]['margin']
+        page_content_margin = page_rules.get(ElementType.PAGE).get("margin")#["page"]['margin']
         text_type_margin = page_rule.get("margin", {"left": 0, "right": 0, "top": 0, "bottom": 0})
         content_width = page_formats.get("letter").get("width") - page_content_margin.get("left", 0) - page_content_margin.get("right", 0)
         
         x = convert_inches_to_pixels(text_type_margin.get("left", 0) )
-        y = self.line * LINE_HEIGHT + convert_inches_to_pixels(text_type_margin.get("top", 0) )
+       # self.y = (self.line * LINE_HEIGHT) + convert_inches_to_pixels(text_type_margin.get("top", 0) )
+       
+        # to get this Y position, get the last bottom + the  margin top size
+        self.y = lastBottom + convert_inches_to_pixels(text_type_margin.get("top", 0) )
+        print(text_type_margin, lastBottom, convert_inches_to_pixels(text_type_margin.get("top", 0) ))
         width = convert_inches_to_pixels(content_width - text_type_margin.get("left", 0) - text_type_margin.get("right", 0) )
         self.setFixedWidth(width)
         
 
         #set the initial size
-        self.setGeometry(x, y, width, LINE_HEIGHT)
+        self.setGeometry(x, self.y, width, LINE_HEIGHT)
 
         #set alignment
         alignment = QtCore.Qt.AlignLeft
@@ -69,6 +75,20 @@ class Text(QLabel):
         self.setValue(self.element.get("value"))
 
     def updateStyleSheet(self, bcolor):
+
+        _type = self.element.get("type")
+        if DEBUG:
+            if _type == ElementType.ACTION:
+                bcolor = "green"
+            elif _type == ElementType.SCENE:
+                bcolor = "pink"
+            elif _type == ElementType.TITLE:
+                        bcolor = "red"
+            elif _type == ElementType.DIALOGUE:
+                        bcolor = "blue"
+            elif _type == ElementType.TRANSITION:
+                        bcolor = "orange"
+
         self.setStyleSheet(f"font-weight: { self.weight }; background-color: {bcolor};")
 
     def enterEvent(self, event):
@@ -101,30 +121,30 @@ class Text(QLabel):
         header = ""
         trailer = ""
 
-        if _type == "transition":
+        if _type == ElementType.TRANSITION:
             trailer = ":" 
-        elif _type == "dialogue":
+        elif _type == ElementType.DIALOGUE:
             #character name
-            character = self.element.get("character")
+            speaker = self.element.get("speaker", "")
             
             voof = ""
-            if self.element.get("voiceover", False) == True:
-                voof += " (V.O.)"
-            if self.element.get("offscreen", False) == True:
-                voof += " (O.S.)"
+ #           if self.element.get("voiceover", False) == True:
+ #               voof += " (V.O.)"
+ #           if self.element.get("offscreen", False) == True:
+ #               voof += " (O.S.)"
 
-            header = character + voof + self.line_break()
+            header = speaker + voof + self.line_break()
             header = header.upper()
 
-        elif _type == "scene":
+        elif _type == ElementType.SCENE:
             intext = ""
             if self.element.get("int", False) == True:
                 intext += "INT - "
-            else:
+            if self.element.get("ext", False) == True:
                 intext += "EXT - "
 
-            if self.element.get("show_int_ext", False) == True:
-                header = intext
+#            if self.element.get("show_int_ext", False) == True:
+            header = intext
 
         self.setText(header + v + trailer)
 
@@ -138,3 +158,6 @@ class Text(QLabel):
 
     def get_line_count(self):
         return int(self.size().height() / LINE_HEIGHT)
+
+    def get_height(self):
+        self.size().height()

@@ -9,7 +9,7 @@ class PageBody(QFrame):
 
     def initUI(self):
         page_format = page_formats.get("letter")
-        page_margin_rule = page_rules.get("page").get("margin")
+        page_margin_rule = page_rules.get(ElementType.PAGE).get("margin")
  
         PAGE_WIDTH = convert_inches_to_pixels(page_format.get("width"))
         PAGE_HEIGHT = convert_inches_to_pixels(page_format.get("height"))

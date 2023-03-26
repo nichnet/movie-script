@@ -1,8 +1,7 @@
-
 from PyQt5.QtWidgets import *
 import sys
 from functools import partial
-from examplescript import content
+#from examplescript import content
 from constants import *
 
 from window import Window 
@@ -21,7 +20,19 @@ def main():
 
     global win
     win = Window()
-    win.setWorkareaContent(content)
+ #   win.setWorkareaContent(lines)
+
+    file_path = './example/script.txt'
+
+    with open(file_path, 'r') as file:
+        for line in file:
+            win.addLine(line)
+#            out.append(parse_line(line))
+#
+ #   return out
+
+  #  lines = parser.from_file('./example/script.txt')
+
 
     #btn = QPushButton(win)
     #btn.setGeometry(1000, 500, 50, 20)

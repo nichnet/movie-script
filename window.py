@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtGui import QIcon, QPixmap
 from constants import *
 
 from workarea import WorkArea
@@ -13,25 +14,46 @@ class Window(QMainWindow):
     def initUI(self):
         self.setGeometry(0, 0, WIDTH, HEIGHT)
         self.setMinimumSize(WIDTH, HEIGHT)
-        self.setWindowTitle = "Script - New"
+        self.setWindowTitle("Inkwell - New")
 
 
-        self.createEditorLayout()
+        #set icon
+        icon = QIcon()
+        pixmap = QPixmap("resources/draw_ink.png")
+        icon.addPixmap(pixmap)
 
-    def createEditorLayout(self):
+        # Set the window icon
+        self.setWindowIcon(icon)
+
+
         self.editor = Editor(self)
-        self.editor.move(0, self.get_width() - 175)
+        self.preview = WorkArea(self)
+
+        self.editor.setTextChangedListener(self.onTextChanged)
+
+##        self.createEditorLayout()
+
+    def onTextChanged(self):
+        self.preview.setContent(self.editor.getLines())  
+
+#    def createEditorLayout(self):
+ #       self.editor = Editor(self)
+#        self.editor.move(0, self.get_width() / 2)
 
 
-    def setWorkareaContent(self, content):
-        self.workarea = WorkArea(self)
-        self.workarea.setContent(content)
+#    def setWorkareaContent(self, content):
+#        self.preview.setContent(content)
 
     def resizeEvent(self, event):
-        print(f"window resized {self.size().width()}")
-        self.workarea.resize(self.get_width() - 175, self.get_height() - 200)
-        self.editor.resize(self.get_width() - 175, 200)
-        self.editor.move(0, self.get_height() - 200)
+        editorWidth =  500
+        previewWidth = self.get_width() - editorWidth
+
+
+        self.preview.resize(previewWidth, self.get_height())
+        self.preview.move(0, 0)
+    
+        self.editor.resize(editorWidth, self.get_height())
+        self.editor.move(previewWidth, 0)
 
     def get_width(self):
         return int(self.size().width())
@@ -39,3 +61,5 @@ class Window(QMainWindow):
     def get_height(self):
         return int(self.size().height())
 
+    def addLine(self, line):
+        self.editor.addLine(line)

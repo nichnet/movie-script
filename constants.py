@@ -1,9 +1,26 @@
+from enum import Enum
+
+DEBUG = 0
+
 WIDTH = 1600
 HEIGHT = 980
 LINE_HEIGHT = 16
 MAX_LINES_PER_PAGE = 55
 
 dpi = 72
+
+
+class ElementType(Enum):
+    TITLE = 0
+    TRANSITION = 1
+    SCENE = 2
+    ACTION = 3
+    DIALOGUE = 4
+    PAGE_NUMBER = 5
+    INTERCUT = 6
+    SPEAKER = 7
+    PAGE = 8
+
 
 def set_dpi(_dpi):
     global dpi
@@ -31,7 +48,7 @@ page_formats = {
 
 #in inches
 page_rules = {
-    "page":{
+    ElementType.PAGE:{
         "margin": {
             "top": 1,
             "right": 1,
@@ -39,38 +56,62 @@ page_rules = {
             "left": 1.5,
         }
     },
-    "dialogue": {
+    ElementType.ACTION: {
+        "margin": {
+            "top": 0.2
+        }
+    },
+    ElementType.DIALOGUE: {
         "margin": {
             "left": 1,
-            "right": 1
+            "right": 1,
+            "top": 0.2
         },
         "align": "center"
     },
-    "character": {
+    ElementType.SPEAKER: {
         "margin": {
             "left": 2.2,   
-            "right": 2.2,   
+            "right": 2.2,
         },
         "uppercase": True,
         "align": "center"
     },
-    "page_number": {
+    ElementType.TITLE: {
+        "margin": {
+            "left": 2.2,   
+            "right": 2.2, 
+        },
+        "uppercase": True,
+        "align": "center",
+        "bold": True
+    },
+    ElementType.PAGE_NUMBER: {
         "margin": {
             "top": 0.5
         },
         "align": "right"
     },
-    "transition": {
+    ElementType.TRANSITION: {
         "align": "right",
         "uppercase": True,
+        "margin": {
+            "top": 0.2
+        }
     },
-    "scene": {
+    ElementType.SCENE: {
         "uppercase": True,
-        "bold": True
+        "bold": True,
+        "margin": {
+            "top": 0.2
+        }
     },
-    "intercut": {
+    ElementType.INTERCUT: {
         "uppercase": True,
-        "bold": True
+        "bold": True,
+        "margin": {
+            "top": 0,
+        }
     }
 
 }
