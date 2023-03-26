@@ -1,6 +1,10 @@
-# Transcript Authoring Software
+# Inkwell
 
-Written in Python using PyQt. 
+Inkwell is an open-source transcript authoring software written in Python that simplifies the process of editing transcripts. The software utilizes the PyQt library to provide a customizable user interface.
+
+One of the unique features of Inkwell is its ability to format transcripts written in a simple markdown style automatically, saving users time and effort that would otherwise be spent on manual formatting. Additionally, Inkwell includes a range of editing tools to help users make quick and precise changes to their transcripts.
+
+The software is constantly being updated with new features and improvements to enhance its user-friendliness and functionality. 
 
 ![Example](https://github.com/nichnet/movie-script/blob/master/example/example_1.png)
 
@@ -9,20 +13,6 @@ Written in Python using PyQt.
 ```python
 python main.py
 ```
-
-## Features
-- Drag-and-drop screnplay elements (such as character dialogue, actions, transitions, scenes, etc),
-- Print to PDF, 
-
-
-
-## TODO
-- Save/Load project file,
-- Modify existing elements,
-- Number scene changes, 
-- Include O.S., V.O. choices in character dialogue,
-- Editor (page view) zoom control, 
-
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
