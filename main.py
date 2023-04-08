@@ -28,12 +28,16 @@ def main():
     win = Window()
  #   win.setWorkareaContent(lines)
 
-    file_path = './example/script.txt'
+    if len(sys.argv) >= 2:
+        try:
 
-    with open(file_path, 'r') as file:
-        for line in file:
-            win.addLine(line)
-#            out.append(parse_line(line))
+            with open(sys.argv[1], 'r') as file:
+                for line in file:
+                    win.addLine(line)
+        #            out.append(parse_line(line))
+        except:
+            print("File not found: " + sys.argv[1])
+            sys.exit(1)
 #
  #   return out
 
@@ -47,10 +51,13 @@ def main():
     #btn2.setGeometry(940, 500, 50, 20)
     #btn2.clicked.connect(workarea.prev_page)
 
+
     win.show()
 
     #clean exit
     sys.exit(app.exec_())
 
+
+ 
 if __name__ == "__main__":
     main()
