@@ -9,9 +9,12 @@ The software is constantly being updated with new features and improvements to e
 ![Example](https://github.com/nichnet/movie-script/blob/master/example/example_1.png)
 
 
-## Usage
+## Features
+- Simple markdown style editor, and page preview
+- Saving/Loading files
+- Printing to PDF
 
-Whilst in development: 
+## Usage
 ```python
 python main.py
 ```
