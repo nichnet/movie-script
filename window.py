@@ -1,11 +1,9 @@
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QAction, QFrame
+from PyQt5.QtWidgets import QMainWindow, QMenuBar, QAction, QFrame, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon, QPixmap, QPainter, QPdfWriter, QPageLayout, QRegion, QPageSize
 from PyQt5.QtCore import QSize, QMarginsF, QSizeF, QPoint, QRectF
-
+import os
 from functools import partial
-
 from constants import *
-
 from workarea import WorkArea
 from editor import Editor
 
@@ -40,6 +38,9 @@ class Window(QMainWindow):
 
         self.editor.setTextChangedListener(self.onTextChanged)
 
+        if DEBUG: 
+            self.setStyleSheet("background-color: purple")
+
 
 
 ##        self.createEditorLayout()
@@ -54,7 +55,13 @@ class Window(QMainWindow):
         fileMenu.addAction(newAction)
         
         openAction = QAction('Open', self)
+        openAction.triggered.connect(self.open)
         fileMenu.addAction(openAction)
+
+        saveAction = QAction('Save', self)
+        saveAction.triggered.connect(self.save)
+        fileMenu.addAction(saveAction)
+
         
         printAction = QAction('Print', self)
         printAction.triggered.connect(partial(self.print, "test.pdf"))
@@ -66,26 +73,55 @@ class Window(QMainWindow):
     def onTextChanged(self):
         self.preview.setContent(self.editor.getLines())  
 
-#    def createEditorLayout(self):
- #       self.editor = Editor(self)
-#        self.editor.move(0, self.get_width() / 2)
-
-
-#    def setWorkareaContent(self, content):
-#        self.preview.setContent(content)
-
     def resizeEvent(self, event):
         editorWidth =  500
         previewWidth = self.get_width() - editorWidth
 
+        windowContentHeight = self.get_height() - self.menubar.size().height()
 
-        self.preview.resize(previewWidth, self.get_height() - self.menubar.size().height())
+        self.preview.resize(previewWidth, windowContentHeight)
         self.preview.move(0, self.menubar.size().height())
     
-        self.editor.resize(editorWidth, self.get_height() - self.menubar.size().height())
+        self.editor.resize(editorWidth, windowContentHeight)
         self.editor.move(previewWidth, self.menubar.size().height())
 
+    def open(self):
+        file_path, _ = QFileDialog.getOpenFileName(None, "Select File", "", "Text Files (*.txt)")
+        print("Selected file path:", file_path)
 
+        if file_path and os.path.exists(file_path):
+            with open(file_path, 'r') as file:
+                self.editor.clear()
+                for line in file:
+                    self.addLine(line)
+
+    def save(self):
+        file_path, _ = QFileDialog.getSaveFileName(None, "Save File", "", "Text Files (*.txt)")
+        print("Selected file path:", file_path)
+
+        self.exportCurrentDocument(file_path)
+
+#        if file_path and os.path.exists(file_path):
+#            # display a warning dialog to confirm overwriting the file
+#            response = QMessageBox.warning(None, "Overwrite File", "A file already exists at the selected location. Do you want to overwrite it?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+#            
+#            if response == QMessageBox.Yes:
+#                self.exportCurrentDocument(file_path)
+#            else:
+#                # display another save file dialog for the user to choose a new file name/location
+#                self.save()
+#                return
+#        else:
+#            if file_path:
+#
+#                #file doesnt exist so save file. 
+#                self.exportCurrentDocument(file_path)
+
+    def exportCurrentDocument(self, path):
+            with open(path, 'w') as file:
+                for line in self.editor.getLines():
+                    file.write(line + "\n")
+        
     def print(self, outputName):
        
         print("Printing file to: " + outputName + ".pdf", "pages: ", len(self.preview.pages))
@@ -102,7 +138,7 @@ class Window(QMainWindow):
       
         painter = QPainter(pdfWriter)
         painter.translate(0,0)
-        painter.scale(7.59, 7.58)
+        painter.scale(7.59, 7.58) #TODO 
 
         painter.begin(pdfWriter)
 

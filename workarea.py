@@ -14,10 +14,6 @@ class WorkArea(QScrollArea):
         super(WorkArea, self).__init__(parent)
         self.parent = parent
 
-        #accept drag/drops
-        self.setAcceptDrops(True)
-
-#        self.current_page = 0
         self.pages = []
 
         self.initUI()
@@ -34,7 +30,11 @@ class WorkArea(QScrollArea):
 
         self.container = QWidget()
 
-        self.vbox = QVBoxLayout(self.container)        
+        self.vbox = QVBoxLayout(self.container)  
+        self.vbox.setAlignment(QtCore.Qt.AlignHCenter)
+
+        if DEBUG:
+            self.container.setStyleSheet(f"background-color: pink;")      
 
 
     def clearEditor(self):
@@ -55,7 +55,7 @@ class WorkArea(QScrollArea):
 
         self.lastElement = None
         page_count = 0
-
+        scene_count = 0
         self.clearEditor()
 
 
@@ -65,13 +65,17 @@ class WorkArea(QScrollArea):
             if element == None:
                 continue
 
+            print(f'current lines: {current_lines}')
             if self.current_page == None or current_lines > MAX_LINES_PER_PAGE:
                 page_count += 1
                 current_lines = 0
+                self.lastElement = None
                 self.current_page = Page(self.parent, page_count)
 
                 #add header content (just page number)
-                lastElement = self.current_page.add_header_element(0, {"type": ElementType.PAGE_NUMBER, "value": str(page_count)})
+                #self.lastElement = self.current_page.add_header_element(0, {"type": ElementType.PAGE_NUMBER, "value": str(page_count)})
+                self.current_page.add_header_element(0, {"type": ElementType.PAGE_NUMBER, "value": str(page_count)})
+
 
                 #render the page to the view
                 self.pages.append(self.current_page)
@@ -80,46 +84,50 @@ class WorkArea(QScrollArea):
             #add elements to the current page
             _type = element.get("type") 
 
+            if _type == ElementType.SCENE:
+                scene_count = scene_count + 1
+                element['scene_number'] = scene_count
+
             if _type == ElementType.ACTION or _type == ElementType.SCENE or _type == ElementType.DIALOGUE:
                 pass
                 current_lines += 1
 
 
             lastBottom = 0
-            if lastElement != None:
-                lastBottom = lastElement.getBottom()
+            if self.lastElement != None:
+                lastBottom = self.lastElement.getBottom()
 
-            lastElement = self.current_page.add_body_element(current_lines, element, lastBottom)
+            self.lastElement = self.current_page.add_body_element(current_lines, element, lastBottom)
             
-            current_lines += lastElement.get_line_count()
+            current_lines += self.lastElement.get_line_count()
 
         self.setWidget(self.container)
 
-    def prev_page(self):
-        pass
+  #  def prev_page(self):
+  #      pass
         #self.current_page = max(0, self.current_page - 1)
         #self.ensureWidgetVisible(self.pages[self.current_page])
 
-    def next_page(self):
-        pass
+  #  def next_page(self):
+   #     pass
         #self.current_page = min(len(self.pages) - 1, self.current_page + 1)
         #self.ensureWidgetVisible(self.pages[self.current_page])
 
-
-    def dragEnterEvent(self, e):
-        e.accept()
-
-    def dropEvent(self, e):
-        pos = e.pos()
-        widget = e.source()
-
-        for n in range(self.vbox.count()):
-            # Get the widget at each index in turn.
-            w = self.vbox.itemAt(n).widget()
-            if pos.x() < w.x() + w.size().width() // 2:
-                # We didn't drag past this widget.
-                # insert to the left of it.
-                self.vbox.insertWidget(n-1, widget)
-                break
-
-        e.accept()
+#
+#    def dragEnterEvent(self, e):
+#        e.accept()
+#
+#    def dropEvent(self, e):
+#        pos = e.pos()
+#        widget = e.source()
+#
+#        for n in range(self.vbox.count()):
+#            # Get the widget at each index in turn.
+#            w = self.vbox.itemAt(n).widget()
+#            if pos.x() < w.x() + w.size().width() // 2:
+#                # We didn't drag past this widget.
+#                # insert to the left of it.
+#                self.vbox.insertWidget(n-1, widget)
+#                break
+#
+#        e.accept()

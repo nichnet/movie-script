@@ -5,7 +5,7 @@ DEBUG = 0
 WIDTH = 1600
 HEIGHT = 980
 LINE_HEIGHT = 16
-MAX_LINES_PER_PAGE = 55
+MAX_LINES_PER_PAGE = 53
 
 dpi = 72
 
@@ -31,7 +31,7 @@ def get_dpi():
     return dpi
 
 def convert_inches_to_pixels(inch):
-    return get_dpi() * inch
+    return int(get_dpi() * inch)
 
 
 page_formats = {

@@ -17,7 +17,8 @@ def init_dpi(app):
     set_dpi(screen.physicalDotsPerInch())
 
 def main():
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)  
+    #TODO Only works for WIN.
+#    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)  
 
     app = QApplication(sys.argv)
 
@@ -26,31 +27,6 @@ def main():
 
     global win
     win = Window()
- #   win.setWorkareaContent(lines)
-
-    if len(sys.argv) >= 2:
-        try:
-
-            with open(sys.argv[1], 'r') as file:
-                for line in file:
-                    win.addLine(line)
-        #            out.append(parse_line(line))
-        except:
-            print("File not found: " + sys.argv[1])
-            sys.exit(1)
-#
- #   return out
-
-  #  lines = parser.from_file('./example/script.txt')
-
-
-    #btn = QPushButton(win)
-    #btn.setGeometry(1000, 500, 50, 20)
-    #btn.clicked.connect(workarea.next_page)
-    #btn2 = QPushButton(win)
-    #btn2.setGeometry(940, 500, 50, 20)
-    #btn2.clicked.connect(workarea.prev_page)
-
 
     win.show()
 

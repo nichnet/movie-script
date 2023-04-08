@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFont, QDrag, QPixmap
 from constants import *
 
 
-font = QFont('Courier', 12)
+font = QFont('Arial', 12)
 
 
 class Text(QLabel):
@@ -31,13 +31,7 @@ class Text(QLabel):
         self.bold = page_rule.get("bold", False)
         self.italic = page_rule.get("bold", False)
 
-
-        if self.bold: 
-            self.weight = "bold" 
-        else:
-            self.weight =  "normal"
-
-        self.updateStyleSheet("transparent")
+        self.updateStyleSheet()
 
 
         page_content_margin = page_rules.get(ElementType.PAGE).get("margin")#["page"]['margin']
@@ -49,7 +43,6 @@ class Text(QLabel):
        
         # to get this Y position, get the last bottom + the  margin top size
         self.y = lastBottom + convert_inches_to_pixels(text_type_margin.get("top", 0) )
-        print(text_type_margin, lastBottom, convert_inches_to_pixels(text_type_margin.get("top", 0) ))
         width = convert_inches_to_pixels(content_width - text_type_margin.get("left", 0) - text_type_margin.get("right", 0) )
         self.setFixedWidth(width)
         
@@ -72,44 +65,57 @@ class Text(QLabel):
         self.setAlignment(alignment | QtCore.Qt.AlignTop)
 
         #finally set the value        
+    
         self.setValue(self.element.get("value"))
 
-    def updateStyleSheet(self, bcolor):
 
+    def updateStyleSheet(self):
+        
         _type = self.element.get("type")
+        
+        bgColor = "transparent"
+
         if DEBUG:
             if _type == ElementType.ACTION:
-                bcolor = "green"
+                bgColor = "green"
             elif _type == ElementType.SCENE:
-                bcolor = "pink"
+                bgColor = "pink"
             elif _type == ElementType.TITLE:
-                        bcolor = "red"
+                bgColor = "red"
             elif _type == ElementType.DIALOGUE:
-                        bcolor = "blue"
+                bgColor = "blue"
             elif _type == ElementType.TRANSITION:
-                        bcolor = "orange"
+                bgColor = "orange"
 
-        self.setStyleSheet(f"font-weight: { self.weight }; background-color: {bcolor};")
+        #TODO built-in Courier font doesnt seem to support BOLD on some computers. Trying with another font that does
+        # support it makes bold font but currently not working. Code here itself does work! Just need to add a local courier ttf which supports bold.
+
+        weight = 'normal'
+
+        if self.bold == True: 
+            weight = 'bold'
+
+        self.setStyleSheet(f"font-weight: {weight}; background-color: {bgColor}")
 
     def enterEvent(self, event):
-        self.updateStyleSheet("red")
+        self.setStyleSheet("background-color: red;")
 
     def leaveEvent(self, event):
-        self.updateStyleSheet("transparent")
+        self.setStyleSheet("background-color: transparent;")
 
     def mousePressEvent (self, event):
         print("clicked!")
-        global win
-        win.editor.setValue(self.getText())
+   #     global win
+#        win.editor.setValue(self.getText())
 
 
-    def mouseMoveEvent(self, e):
-        if e.buttons() == QtCore.Qt.LeftButton:
-            drag = QDrag(self)
-            mime = QtCore.QMimeData()
-            drag.setMimeData(mime)
-            drag.exec_(QtCore.Qt.MoveAction)
-
+#    def mouseMoveEvent(self, e):
+#        if e.buttons() == QtCore.Qt.LeftButton:
+#            drag = QDrag(self)
+#            mime = QtCore.QMimeData()
+#            drag.setMimeData(mime)
+#            drag.exec_(QtCore.Qt.MoveAction)
+#
 
     def setValue(self, value):
         _type = self.element.get("type")
@@ -144,7 +150,7 @@ class Text(QLabel):
                 intext += "EXT - "
 
 #            if self.element.get("show_int_ext", False) == True:
-            header = intext
+            header = f'{self.element.get("scene_number", 1)} {intext}'
 
         self.setText(header + v + trailer)
 
@@ -157,7 +163,7 @@ class Text(QLabel):
         return "\r\n"
 
     def get_line_count(self):
-        return int(self.size().height() / LINE_HEIGHT)
+        return int(self.size().height() / LINE_HEIGHT) + 1 # + 1 because each element will have a "new line" below it. 
 
     def get_height(self):
         self.size().height()
