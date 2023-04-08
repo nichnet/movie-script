@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFont, QDrag, QPixmap
 from constants import *
 
 
-font = QFont('Arial', 12)
+font = QFont('Courier', 12)
 
 
 class Text(QLabel):

@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QGraphicsDropShadowEffect
+from PyQt5.QtGui import QColor
 
 from pagebody import PageBody
 from text import Text
@@ -40,13 +41,21 @@ class Page(QFrame):
 
        # self.page = QFrame()
         self.setFixedSize(self.PAGE_WIDTH, self.PAGE_HEIGHT)
-        self.setStyleSheet(f'background-color: transparent')
+      # self.setStyleSheet(f'background-color: transparent; ')
     
         self.bg = QFrame(self)
         self.bg.setGeometry(0, 0, self.PAGE_WIDTH, self.PAGE_HEIGHT)
 
-        self.bg.setStyleSheet(f'background-color: white; border: 1px solid black')
+        self.bg.setStyleSheet(f'background-color: white; border: 1px solid black;')
         
+        #add shadow effect to page
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(10)
+        shadow.setColor(QColor(0, 0, 0, 80))
+        shadow.setOffset(2, 2)
+
+        # Apply the drop shadow effect to the button
+        self.setGraphicsEffect(shadow)
 
         width = self.PAGE_WIDTH - self.MARGIN_LEFT - self.MARGIN_RIGHT
 
