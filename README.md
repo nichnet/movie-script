@@ -17,7 +17,7 @@ python main.py
 
 ## Features
 - Simple markdown style editor, and page preview
-- Also supports tags like <b>, <i>, etc.
+- Also supports tags like <b>, <i>, <u>, <br>
 - Saving/Loading files
 - Printing to PDF
 
