@@ -12,6 +12,7 @@ The software is constantly being updated with new features and improvements to e
 ## Usage
 ```python
 python main.py
+python main.py --debug
 ```
 
 
