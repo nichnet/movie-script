@@ -32,13 +32,11 @@ class Editor(QWidget):
 
         self.textedit = QTextEdit(self.container)
         self.textedit.setAlignment(QtCore.Qt.AlignTop)
-
-
         self.textedit.setFont(font)
 
         bgColor = '#C8C8C8'
 
-        if DEBUG: 
+        if get_debug_mode(): 
             bgColor = 'green'
 
         self.textedit.setStyleSheet(f"background-color: {bgColor}; padding-left:10; padding-top:10; padding-bottom:10; padding-right:10;")

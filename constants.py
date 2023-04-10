@@ -26,6 +26,14 @@ def set_dpi(_dpi):
     global dpi
     dpi = _dpi
 
+def set_debug_mode(mode):
+    global DEBUG
+    DEBUG = mode
+
+def get_debug_mode():
+    global DEBUG
+    return DEBUG
+
 def get_dpi():
     global dpi
     return dpi
@@ -75,7 +83,8 @@ page_rules = {
             "right": 2.2,
         },
         "uppercase": True,
-        "align": "center"
+        "bold": True, 
+        "align": "center",
     },
     ElementType.TITLE: {
         "margin": {
@@ -84,7 +93,8 @@ page_rules = {
         },
         "uppercase": True,
         "align": "center",
-        "bold": True
+        "bold": True,
+        "underline": True,
     },
     ElementType.PAGE_NUMBER: {
         "margin": {

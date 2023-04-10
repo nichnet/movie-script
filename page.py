@@ -12,8 +12,6 @@ class Page(QFrame):
         self.parent = parent
         self.page_number = page_number
 
-
-
         page_format = page_formats.get("letter")
         page_margin_rule = page_rules.get(ElementType.PAGE).get("margin")
         self.PAGE_WIDTH = convert_inches_to_pixels(page_format.get("width"))
@@ -33,7 +31,7 @@ class Page(QFrame):
         footerColor = 'transparent'
         bgColor = 'transparent'
 
-        if DEBUG:
+        if get_debug_mode():
             headerColor = 'green'
             footerColor = 'pink'
             bgColor = 'yellow'

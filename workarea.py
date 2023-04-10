@@ -33,7 +33,7 @@ class WorkArea(QScrollArea):
         self.vbox = QVBoxLayout(self.container)  
         self.vbox.setAlignment(QtCore.Qt.AlignHCenter)
 
-        if DEBUG:
+        if get_debug_mode():
             self.container.setStyleSheet(f"background-color: pink;")      
 
 
@@ -65,7 +65,6 @@ class WorkArea(QScrollArea):
             if element == None:
                 continue
 
-            print(f'current lines: {current_lines}')
             if self.current_page == None or current_lines > MAX_LINES_PER_PAGE:
                 page_count += 1
                 current_lines = 0
@@ -89,9 +88,8 @@ class WorkArea(QScrollArea):
                 element['scene_number'] = scene_count
 
             if _type == ElementType.ACTION or _type == ElementType.SCENE or _type == ElementType.DIALOGUE:
-                pass
+               # pass
                 current_lines += 1
-
 
             lastBottom = 0
             if self.lastElement != None:
@@ -99,35 +97,6 @@ class WorkArea(QScrollArea):
 
             self.lastElement = self.current_page.add_body_element(current_lines, element, lastBottom)
             
-            current_lines += self.lastElement.get_line_count()
+            current_lines += self.lastElement.get_line_count() + 1
 
         self.setWidget(self.container)
-
-  #  def prev_page(self):
-  #      pass
-        #self.current_page = max(0, self.current_page - 1)
-        #self.ensureWidgetVisible(self.pages[self.current_page])
-
-  #  def next_page(self):
-   #     pass
-        #self.current_page = min(len(self.pages) - 1, self.current_page + 1)
-        #self.ensureWidgetVisible(self.pages[self.current_page])
-
-#
-#    def dragEnterEvent(self, e):
-#        e.accept()
-#
-#    def dropEvent(self, e):
-#        pos = e.pos()
-#        widget = e.source()
-#
-#        for n in range(self.vbox.count()):
-#            # Get the widget at each index in turn.
-#            w = self.vbox.itemAt(n).widget()
-#            if pos.x() < w.x() + w.size().width() // 2:
-#                # We didn't drag past this widget.
-#                # insert to the left of it.
-#                self.vbox.insertWidget(n-1, widget)
-#                break
-#
-#        e.accept()

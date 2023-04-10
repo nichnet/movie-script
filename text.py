@@ -2,6 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QFont, QDrag, QPixmap
 from constants import *
+import re
 
 
 font = QFont('Courier', 12)
@@ -29,7 +30,8 @@ class Text(QLabel):
 
         self.uppercase = page_rule.get("uppercase", False)
         self.bold = page_rule.get("bold", False)
-        self.italic = page_rule.get("bold", False)
+        self.italic = page_rule.get("italic", False)
+        self.underline = page_rule.get("underline", False)
 
         self.updateStyleSheet()
 
@@ -74,8 +76,7 @@ class Text(QLabel):
         _type = self.element.get("type")
         
         bgColor = "transparent"
-
-        if DEBUG:
+        if get_debug_mode():
             if _type == ElementType.ACTION:
                 bgColor = "green"
             elif _type == ElementType.SCENE:
@@ -95,27 +96,21 @@ class Text(QLabel):
         if self.bold == True: 
             weight = 'bold'
 
-        self.setStyleSheet(f"font-weight: {weight}; background-color: {bgColor}")
+        decoration = 'none'
+
+        if self.underline:
+            decoration = 'underline'
+
+        self.setStyleSheet(f"text-decoration: {decoration}; font-weight: {weight}; background-color: {bgColor}")
 
     def enterEvent(self, event):
         self.setStyleSheet("background-color: red;")
 
     def leaveEvent(self, event):
-        self.setStyleSheet("background-color: transparent;")
+        self.updateStyleSheet()
 
     def mousePressEvent (self, event):
         print("clicked!")
-   #     global win
-#        win.editor.setValue(self.getText())
-
-
-#    def mouseMoveEvent(self, e):
-#        if e.buttons() == QtCore.Qt.LeftButton:
-#            drag = QDrag(self)
-#            mime = QtCore.QMimeData()
-#            drag.setMimeData(mime)
-#            drag.exec_(QtCore.Qt.MoveAction)
-#
 
     def setValue(self, value):
         _type = self.element.get("type")
@@ -151,6 +146,12 @@ class Text(QLabel):
 
 #            if self.element.get("show_int_ext", False) == True:
             header = f'{self.element.get("scene_number", 1)} {intext}'
+
+
+        #Allow bold, underline, break, and italic but no other HTML tags
+        html_tags_to_keep = ['u', 'b', 'br', 'i']
+        regex = re.compile(r'<(?!\/?(%s)\s*>)\/?.*?>' % '|'.join(html_tags_to_keep), re.IGNORECASE)
+        v = regex.sub('', v)
 
         self.setText(header + v + trailer)
 

@@ -24,7 +24,7 @@ class PageBody(QFrame):
 
         backgroundColor = 'transparent'
 
-        if DEBUG: 
+        if get_debug_mode(): 
             backgroundColor = 'cyan'
 
         self.setStyleSheet(f'background-color: {backgroundColor}')

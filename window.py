@@ -38,7 +38,7 @@ class Window(QMainWindow):
 
         self.editor.setTextChangedListener(self.onTextChanged)
 
-        if DEBUG: 
+        if get_debug_mode(): 
             self.setStyleSheet("background-color: purple")
 
 
@@ -98,8 +98,9 @@ class Window(QMainWindow):
     def save(self):
         file_path, _ = QFileDialog.getSaveFileName(None, "Save File", "", "Text Files (*.txt)")
         print("Selected file path:", file_path)
-
-        self.exportCurrentDocument(file_path)
+        
+        if file_path:
+            self.exportCurrentDocument(file_path)
 
 #        if file_path and os.path.exists(file_path):
 #            # display a warning dialog to confirm overwriting the file
