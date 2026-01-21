@@ -6,6 +6,7 @@ from page import Page
 import fparse;
 
 from constants import *
+from constants import get_dark_mode
 
 
 class WorkArea(QScrollArea): 
@@ -100,3 +101,16 @@ class WorkArea(QScrollArea):
             current_lines += self.lastElement.get_line_count() + 1
 
         self.setWidget(self.container)
+
+    def applyTheme(self):
+        dark = get_dark_mode()
+        if dark:
+            self.container.setStyleSheet("background-color: #2b2b2b;")
+            self.setStyleSheet("background-color: #2b2b2b;")
+        else:
+            self.container.setStyleSheet("")
+            self.setStyleSheet("")
+
+        # Re-render content to apply theme to pages and text
+        if hasattr(self, 'parent') and hasattr(self.parent, 'editor'):
+            self.setContent(self.parent.editor.getLines())

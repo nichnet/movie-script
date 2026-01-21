@@ -2,6 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QFont, QDrag, QPixmap
 from constants import *
+from constants import get_dark_mode
 import re
 
 
@@ -101,16 +102,15 @@ class Text(QLabel):
         if self.underline:
             decoration = 'underline'
 
-        self.setStyleSheet(f"text-decoration: {decoration}; font-weight: {weight}; background-color: {bgColor}")
+        textColor = 'white' if get_dark_mode() else 'black'
+
+        self.setStyleSheet(f"text-decoration: {decoration}; font-weight: {weight}; background-color: {bgColor}; color: {textColor};")
 
     def enterEvent(self, event):
         self.setStyleSheet("background-color: red;")
 
     def leaveEvent(self, event):
         self.updateStyleSheet()
-
-    def mousePressEvent (self, event):
-        print("clicked!")
 
     def setValue(self, value):
         _type = self.element.get("type")
@@ -145,15 +145,20 @@ class Text(QLabel):
                 intext += "EXT - "
 
 #            if self.element.get("show_int_ext", False) == True:
-            header = f'{self.element.get("scene_number", 1)} {intext}'
+            scene_num = self.element.get("scene_number", 1)
+            header = f'{scene_num} {intext}'
+            trailer = f'{scene_num}'
 
 
         #Allow bold, underline, break, and italic but no other HTML tags
-        html_tags_to_keep = ['u', 'b', 'br', 'i']
+        html_tags_to_keep = ['u', 'b', 'br', 'i', 'table', 'tr', 'td']
         regex = re.compile(r'<(?!\/?(%s)\s*>)\/?.*?>' % '|'.join(html_tags_to_keep), re.IGNORECASE)
         v = regex.sub('', v)
 
-        self.setText(header + v + trailer)
+        if _type == ElementType.SCENE:
+            self.setText(f'<table width="100%"><tr><td>{header}{v}</td><td align="right">{trailer}</td></tr></table>')
+        else:
+            self.setText(header + v + trailer)
 
         #update the size of the label
         #since it has a fixed width, only the height may increase (or decrease)

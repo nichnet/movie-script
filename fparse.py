@@ -28,13 +28,13 @@ def parse_line(line):
 
         startIndex = 1
 
-        #interior/exterior scene
-        if trimmed.startswith('#I'):
+        #interior/exterior scene (require space after #I or #E)
+        if trimmed.startswith('#I '):
             out['int'] = True
-            startIndex = 2
-        elif trimmed.startswith('#E'):
+            startIndex = 3
+        elif trimmed.startswith('#E '):
             out['ext'] = True
-            startIndex = 2
+            startIndex = 3
 
         out['value'] = trimmed[startIndex:].strip()#.upper()
     elif trimmed.startswith('@'):

@@ -1,6 +1,7 @@
 from enum import Enum
 
 DEBUG = 0
+DARK_MODE = False
 
 WIDTH = 1600
 HEIGHT = 980
@@ -33,6 +34,14 @@ def set_debug_mode(mode):
 def get_debug_mode():
     global DEBUG
     return DEBUG
+
+def set_dark_mode(mode):
+    global DARK_MODE
+    DARK_MODE = mode
+
+def get_dark_mode():
+    global DARK_MODE
+    return DARK_MODE
 
 def get_dpi():
     global dpi

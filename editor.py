@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget, QTextEdit
 from PyQt5.QtGui import QFont
 
 from constants import *
+from constants import get_dark_mode
 
 
 font = QFont('Courier', 12)
@@ -58,3 +59,15 @@ class Editor(QWidget):
     def getLines(self):
         trimmed = re.sub(r'\n+', '\n', self.textedit.toPlainText())
         return trimmed.split('\n')
+
+    def applyTheme(self):
+        dark = get_dark_mode()
+        if dark:
+            bgColor = '#3c3c3c'
+            textColor = 'white'
+            self.setStyleSheet(f"background-color: {bgColor}")
+            self.textedit.setStyleSheet(f"background-color: {bgColor}; color: {textColor}; padding-left:10; padding-top:10; padding-bottom:10; padding-right:10;")
+        else:
+            bgColor = '#C8C8C8'
+            self.setStyleSheet(f"background-color: {bgColor}")
+            self.textedit.setStyleSheet(f"background-color: {bgColor}; padding-left:10; padding-top:10; padding-bottom:10; padding-right:10;")

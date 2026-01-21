@@ -5,6 +5,7 @@ from pagebody import PageBody
 from text import Text
 
 from constants import *
+from constants import get_dark_mode
 
 class Page(QFrame):
     def __init__(self, parent, page_number):
@@ -44,7 +45,7 @@ class Page(QFrame):
         self.bg = QFrame(self)
         self.bg.setGeometry(0, 0, self.PAGE_WIDTH, self.PAGE_HEIGHT)
 
-        self.bg.setStyleSheet(f'background-color: white; border: 1px solid black;')
+        self.applyTheme()
         
         #add shadow effect to page
         shadow = QGraphicsDropShadowEffect()
@@ -81,3 +82,10 @@ class Page(QFrame):
     def add_header_element(self, line, element):
         text = Text(self.header, line, element)
         return text
+
+    def applyTheme(self):
+        dark = get_dark_mode()
+        if dark:
+            self.bg.setStyleSheet('background-color: #1e1e1e; border: 1px solid #555;')
+        else:
+            self.bg.setStyleSheet('background-color: white; border: 1px solid black;')
