@@ -1,60 +1,56 @@
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QAction, QActionGroup, QMenu, QFrame, QFileDialog, QMessageBox, QDialog, QVBoxLayout, QLabel, QScrollArea, QWidget, QStatusBar
-from PyQt5.QtGui import QIcon, QPixmap, QPainter, QPdfWriter, QPageLayout, QRegion, QPageSize, QKeySequence
-from PyQt5.QtCore import QSize, QMarginsF, QSizeF, QPoint, QRectF, Qt
+from PyQt5.QtWidgets import (
+    QMainWindow, QMenuBar, QAction, QActionGroup, QMenu,
+    QFrame, QStatusBar, QLabel
+)
+from PyQt5.QtGui import QIcon, QPixmap, QKeySequence
+from PyQt5.QtCore import Qt
 import os
-from constants import *
-from constants import set_dark_mode, get_dark_mode
+
+from config import WIDTH, HEIGHT, app_state
 from workarea import WorkArea
 from editor import Editor
+from pdf_exporter import export_to_pdf
+from help_dialog import HelpDialog, show_about
+from file_handler import FileHandler
+
 
 class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
-
-
         self.initUI()
 
     def initUI(self):
-        self.currentFilePath = None
-        self.hasUnsavedChanges = False
-
-        self.setGeometry(0,0, WIDTH, HEIGHT)
+        self.setGeometry(0, 0, WIDTH, HEIGHT)
         self.setMinimumSize(WIDTH, HEIGHT)
         self.setWindowTitle("Inkwell - New")
 
-
-        #application icon
+        # Application icon
         icon = QIcon()
         pixmap = QPixmap("resources/draw_ink.png")
         icon.addPixmap(pixmap)
-        #app.setWindowIcon(app_icon)
-
-        # Set window icon
         self.setWindowIcon(icon)
 
-       
         self.createMenu()
 
         self.editor = Editor(self)
         self.preview = WorkArea(self)
 
+        # Initialize file handler
+        self.file_handler = FileHandler(self.editor, self.updateWindowTitle)
+
         self.editor.setTextChangedListener(self.onTextChanged)
 
         self.createStatusBar()
 
-        if get_debug_mode():
+        if app_state.debug:
             self.setStyleSheet("background-color: purple")
 
-
-
-##        self.createEditorLayout()
-
-    def createMenu(self): 
-        # Create a menu bar
+    def createMenu(self):
         self.menubar = self.menuBar()
 
+        # File menu
         fileMenu = self.menubar.addMenu('File')
-        
+
         newAction = QAction('New', self)
         newAction.setShortcut(QKeySequence.New)
         newAction.triggered.connect(self.new)
@@ -87,11 +83,9 @@ class Window(QMainWindow):
         # View menu
         viewMenu = self.menubar.addMenu('View')
 
-        # Mode submenu
         modeMenu = QMenu('Mode', self)
         viewMenu.addMenu(modeMenu)
 
-        # Create action group for exclusive selection
         modeGroup = QActionGroup(self)
 
         self.lightModeAction = QAction('Light', self, checkable=True)
@@ -120,9 +114,9 @@ class Window(QMainWindow):
         self.statusbar = QStatusBar()
         self.setStatusBar(self.statusbar)
 
+        self.pageCountLabel = QLabel("Pages: 0")
         self.wordCountLabel = QLabel("Words: 0")
         self.sceneCountLabel = QLabel("Scenes: 0")
-        self.pageCountLabel = QLabel("Pages: 0")
 
         self.statusbar.addWidget(self.pageCountLabel)
         self.statusbar.addWidget(self.wordCountLabel)
@@ -132,36 +126,32 @@ class Window(QMainWindow):
         lines = self.editor.getLines()
 
         # Word count
-        words = 0
-        for line in lines:
-            words += len(line.split())
+        words = sum(len(line.split()) for line in lines)
 
         # Scene count (lines starting with #, but not ##)
-        scenes = 0
-        for line in lines:
-            stripped = line.strip()
-            if stripped.startswith('#') and not stripped.startswith('##'):
-                scenes += 1
+        scenes = sum(
+            1 for line in lines
+            if line.strip().startswith('#') and not line.strip().startswith('##')
+        )
 
         # Page count
         pages = len(self.preview.pages) if hasattr(self.preview, 'pages') else 0
 
+        self.pageCountLabel.setText(f"Pages: {pages}")
         self.wordCountLabel.setText(f"Words: {words}")
         self.sceneCountLabel.setText(f"Scenes: {scenes}")
-        self.pageCountLabel.setText(f"Pages: {pages}")
 
     def onTextChanged(self):
-        self.hasUnsavedChanges = True
+        self.file_handler.mark_changed()
         self.preview.setContent(self.editor.getLines())
         self.updateStatusBar()
 
     def setTheme(self, dark):
-        set_dark_mode(dark)
+        app_state.dark_mode = dark
         self.applyTheme()
 
     def applyTheme(self):
-        dark = get_dark_mode()
-        if dark:
+        if app_state.dark_mode:
             self.setStyleSheet("background-color: #2b2b2b;")
             self.menubar.setStyleSheet("background-color: #3c3c3c; color: white;")
             self.statusbar.setStyleSheet("background-color: #3c3c3c; color: white;")
@@ -177,151 +167,36 @@ class Window(QMainWindow):
         editorWidth = 500
         previewWidth = self.get_width() - editorWidth
 
-        windowContentHeight = self.get_height() - self.menubar.size().height() - self.statusbar.size().height()
+        windowContentHeight = (
+            self.get_height()
+            - self.menubar.size().height()
+            - self.statusbar.size().height()
+        )
 
         self.preview.resize(previewWidth, windowContentHeight)
         self.preview.move(0, self.menubar.size().height())
-    
+
         self.editor.resize(editorWidth, windowContentHeight)
         self.editor.move(previewWidth, self.menubar.size().height())
 
+    # File operations - delegated to FileHandler
     def new(self):
-        if self.hasUnsavedChanges:
-            response = QMessageBox.question(
-                self,
-                "Unsaved Changes",
-                "You have unsaved changes. Do you want to save before creating a new document?",
-                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel,
-                QMessageBox.Save
-            )
-            if response == QMessageBox.Save:
-                self.save()
-            elif response == QMessageBox.Cancel:
-                return
-
-        self.editor.clear()
-        self.currentFilePath = None
-        self.hasUnsavedChanges = False
-        self.updateWindowTitle()
+        self.file_handler.new(self)
 
     def open(self):
-        if self.hasUnsavedChanges:
-            response = QMessageBox.question(
-                self,
-                "Unsaved Changes",
-                "You have unsaved changes. Do you want to save before opening another document?",
-                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel,
-                QMessageBox.Save
-            )
-            if response == QMessageBox.Save:
-                self.save()
-            elif response == QMessageBox.Cancel:
-                return
-
-        file_path, _ = QFileDialog.getOpenFileName(None, "Open Project", "", "Inkwell Files (*.ink)")
-
-        if file_path and os.path.exists(file_path):
-            with open(file_path, 'r') as file:
-                self.editor.clear()
-                for line in file:
-                    self.addLine(line)
-            self.currentFilePath = file_path
-            self.hasUnsavedChanges = False
-            self.updateWindowTitle()
+        self.file_handler.open(self, self.addLine)
 
     def save(self):
-        # If we have a current file, save directly to it
-        if self.currentFilePath:
-            self.exportCurrentDocument(self.currentFilePath)
-        else:
-            # No current file, prompt for save location
-            self.saveAs()
+        self.file_handler.save(self)
 
     def saveAs(self):
-        file_path, _ = QFileDialog.getSaveFileName(None, "Save Project", "", "Inkwell Files (*.ink)")
-
-        if file_path:
-            if not file_path.endswith('.ink'):
-                file_path += '.ink'
-            self.currentFilePath = file_path
-            self.exportCurrentDocument(file_path)
-            self.updateWindowTitle()
+        self.file_handler.save_as(self)
 
     def updateWindowTitle(self):
-        if self.currentFilePath:
-            filename = os.path.basename(self.currentFilePath)
-            self.setWindowTitle(f"Inkwell - {filename}")
-        else:
-            self.setWindowTitle("Inkwell - New")
+        self.setWindowTitle(self.file_handler.get_window_title())
 
-    def exportCurrentDocument(self, path):
-        with open(path, 'w') as file:
-            for line in self.editor.getLines():
-                file.write(line + "\n")
-        self.hasUnsavedChanges = False
-        
     def exportToPdf(self):
-        file_path, _ = QFileDialog.getSaveFileName(None, "Export to PDF", "", "PDF Files (*.pdf)")
-
-        if not file_path:
-            return
-
-        if not file_path.endswith('.pdf'):
-            file_path += '.pdf'
-
-        if len(self.preview.pages) == 0:
-            QMessageBox.warning(self, "Export Error", "No pages to export.")
-            return
-
-        pdfWriter = QPdfWriter(file_path)
-        pageSize = QPageSize(QPageSize.Letter)
-        pageLayout = QPageLayout(pageSize, QPageLayout.Portrait, QMarginsF(0, 0, 0, 0))
-        pdfWriter.setPageLayout(pageLayout)
-
-        # Higher resolution for sharper output
-        pdfWriter.setResolution(300)
-
-        pdfWidth = pdfWriter.width()
-        pdfHeight = pdfWriter.height()
-
-        painter = QPainter(pdfWriter)
-
-        for i, page in enumerate(self.preview.pages):
-            # Grab page and scale up for better quality
-            pixmap = page.grab()
-
-            scaleFactor = 3
-            highResPixmap = pixmap.scaled(
-                pixmap.width() * scaleFactor,
-                pixmap.height() * scaleFactor,
-                Qt.KeepAspectRatio,
-                Qt.SmoothTransformation
-            )
-
-            # Calculate scale to fit PDF page
-            scaleX = pdfWidth / highResPixmap.width()
-            scaleY = pdfHeight / highResPixmap.height()
-            scale = min(scaleX, scaleY)
-
-            scaledWidth = int(highResPixmap.width() * scale)
-            scaledHeight = int(highResPixmap.height() * scale)
-
-            # Center on page
-            x = (pdfWidth - scaledWidth) // 2
-            y = (pdfHeight - scaledHeight) // 2
-
-            targetRect = QRectF(x, y, scaledWidth, scaledHeight)
-            sourceRect = QRectF(0, 0, highResPixmap.width(), highResPixmap.height())
-
-            painter.drawPixmap(targetRect, highResPixmap, sourceRect)
-
-            # Add new page if not the last one
-            if i < len(self.preview.pages) - 1:
-                pdfWriter.newPage()
-
-        painter.end()
-
-        QMessageBox.information(self, "Export Complete", f"PDF exported to:\n{file_path}")
+        export_to_pdf(self, self.preview.pages)
 
     def get_width(self):
         return int(self.size().width())
@@ -333,82 +208,7 @@ class Window(QMainWindow):
         self.editor.addLine(line)
 
     def showHelp(self):
-        # If help dialog already exists and is visible, bring it to front
-        if hasattr(self, 'helpDialog') and self.helpDialog is not None and self.helpDialog.isVisible():
-            self.helpDialog.raise_()
-            self.helpDialog.activateWindow()
-            return
-
-        self.helpDialog = QDialog(self)
-        self.helpDialog.setWindowTitle("Formatting Help")
-        self.helpDialog.setMinimumSize(500, 400)
-        self.helpDialog.setWindowFlags(self.helpDialog.windowFlags() | Qt.WindowStaysOnTopHint)
-
-        layout = QVBoxLayout(self.helpDialog)
-
-        scrollArea = QScrollArea()
-        scrollArea.setWidgetResizable(True)
-
-        contentWidget = QWidget()
-        contentLayout = QVBoxLayout(contentWidget)
-
-        helpText = """
-<h2>Document Formatting Rules</h2>
-
-<h3>Line Prefixes</h3>
-<table>
-<tr><td><b>*</b></td><td>Title (centered, bold, underlined, uppercase)</td></tr>
-<tr><td><b>#</b></td><td>Scene heading (bold, uppercase)</td></tr>
-<tr><td><b>#I</b></td><td>Interior scene (adds "INT - " prefix)</td></tr>
-<tr><td><b>#E</b></td><td>Exterior scene (adds "EXT - " prefix)</td></tr>
-<tr><td><b>##</b></td><td>Transition (right-aligned, uppercase, adds colon)</td></tr>
-<tr><td><b>@</b></td><td>Dialogue with speaker</td></tr>
-</table>
-
-<h3>Dialogue Format</h3>
-<p>Use <b>@Speaker "dialogue text"</b></p>
-<p>Example: <code>@John "Hello, how are you?"</code></p>
-
-<h3>Inline Formatting</h3>
-<table>
-<tr><td><b>&lt;b&gt;text&lt;/b&gt;</b></td><td>Bold text</td></tr>
-<tr><td><b>&lt;i&gt;text&lt;/i&gt;</b></td><td>Italic text</td></tr>
-<tr><td><b>&lt;u&gt;text&lt;/u&gt;</b></td><td>Underlined text</td></tr>
-<tr><td><b>&lt;br&gt;</b></td><td>Line break</td></tr>
-</table>
-
-<h3>Plain Text</h3>
-<p>Any line without a prefix is treated as <b>Action/Description</b>.</p>
-
-<h3>Examples</h3>
-<pre>
-*My Movie Title
-
-#I Coffee Shop - Day
-John enters the coffee shop.
-
-@John "I'll have a coffee, please."
-
-##CUT TO
-
-#E Street - Night
-The city lights flicker in the &lt;b&gt;rain&lt;/b&gt;.
-</pre>
-"""
-
-        helpLabel = QLabel(helpText)
-        helpLabel.setWordWrap(True)
-        helpLabel.setTextFormat(1)  # RichText
-        contentLayout.addWidget(helpLabel)
-
-        scrollArea.setWidget(contentWidget)
-        layout.addWidget(scrollArea)
-
-        self.helpDialog.show()
+        HelpDialog.show_help(self)
 
     def showAbout(self):
-        QMessageBox.about(self, "About Inkwell",
-            "Inkwell - Screenplay Editor\n\n"
-            "A simple screenplay writing application.\n\n"
-            "Write your screenplay using simple formatting rules\n"
-            "and export to PDF.")
+        show_about(self)

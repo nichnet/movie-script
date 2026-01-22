@@ -1,137 +1,41 @@
-from enum import Enum
+"""Backwards compatibility - re-exports from new modules.
 
-DEBUG = 0
-DARK_MODE = False
+This file maintains backwards compatibility with existing code.
+New code should import directly from the specific modules:
+- config.py: WIDTH, HEIGHT, LINE_HEIGHT, MAX_LINES_PER_PAGE, app_state
+- elements.py: ElementType
+- page_rules.py: PAGE_FORMATS, PAGE_RULES
+- theme.py: theme_manager
+"""
 
-WIDTH = 1600
-HEIGHT = 980
-LINE_HEIGHT = 16
-MAX_LINES_PER_PAGE = 53
+# Re-export from config
+from config import WIDTH, HEIGHT, LINE_HEIGHT, MAX_LINES_PER_PAGE, app_state
 
-dpi = 72
+# Re-export from elements
+from elements import ElementType
 
+# Re-export from page_rules
+from page_rules import PAGE_FORMATS as page_formats
+from page_rules import PAGE_RULES as page_rules
 
-class ElementType(Enum):
-    TITLE = 0
-    TRANSITION = 1
-    SCENE = 2
-    ACTION = 3
-    DIALOGUE = 4
-    PAGE_NUMBER = 5
-    INTERCUT = 6
-    SPEAKER = 7
-    PAGE = 8
-
-
-def set_dpi(_dpi):
-    global dpi
-    dpi = _dpi
-
-def set_debug_mode(mode):
-    global DEBUG
-    DEBUG = mode
-
-def get_debug_mode():
-    global DEBUG
-    return DEBUG
-
-def set_dark_mode(mode):
-    global DARK_MODE
-    DARK_MODE = mode
-
-def get_dark_mode():
-    global DARK_MODE
-    return DARK_MODE
+# Backwards compatible function wrappers
+def set_dpi(dpi):
+    app_state.dpi = dpi
 
 def get_dpi():
-    global dpi
-    return dpi
+    return app_state.dpi
 
-def convert_inches_to_pixels(inch):
-    return int(get_dpi() * inch)
+def set_debug_mode(mode):
+    app_state.debug = mode
 
+def get_debug_mode():
+    return app_state.debug
 
-page_formats = {
-    "letter": {
-        "width":8.5, 
-        "height":11
-    },
-    "a4": {
-        "width": 8.25, 
-        "height":11.75
-    }
-}
+def set_dark_mode(mode):
+    app_state.dark_mode = mode
 
+def get_dark_mode():
+    return app_state.dark_mode
 
-#in inches
-page_rules = {
-    ElementType.PAGE:{
-        "margin": {
-            "top": 1,
-            "right": 1,
-            "bottom": 1,
-            "left": 1.5,
-        }
-    },
-    ElementType.ACTION: {
-        "margin": {
-            "top": 0.2
-        }
-    },
-    ElementType.DIALOGUE: {
-        "margin": {
-            "left": 1,
-            "right": 1,
-            "top": 0.2
-        },
-        "align": "center"
-    },
-    ElementType.SPEAKER: {
-        "margin": {
-            "left": 2.2,   
-            "right": 2.2,
-        },
-        "uppercase": True,
-        "bold": True, 
-        "align": "center",
-    },
-    ElementType.TITLE: {
-        "margin": {
-            "left": 2.2,   
-            "right": 2.2, 
-        },
-        "uppercase": True,
-        "align": "center",
-        "bold": True,
-        "underline": True,
-    },
-    ElementType.PAGE_NUMBER: {
-        "margin": {
-            "top": 0.5
-        },
-        "align": "right"
-    },
-    ElementType.TRANSITION: {
-        "align": "right",
-        "uppercase": True,
-        "margin": {
-            "top": 0.2
-        }
-    },
-    ElementType.SCENE: {
-        "uppercase": True,
-        "bold": True,
-        "margin": {
-            "top": 0.2
-        }
-    },
-    ElementType.INTERCUT: {
-        "uppercase": True,
-        "bold": True,
-        "margin": {
-            "top": 0,
-        }
-    }
-
-}
-
+def convert_inches_to_pixels(inches):
+    return app_state.convert_inches_to_pixels(inches)

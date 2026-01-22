@@ -1,5 +1,8 @@
 from PyQt5.QtWidgets import QFrame
-from constants import *
+
+from config import LINE_HEIGHT, app_state
+from elements import ElementType
+from page_rules import PAGE_FORMATS, PAGE_RULES
 
 class PageBody(QFrame):
     def __init__(self, parent):
@@ -8,15 +11,15 @@ class PageBody(QFrame):
         self.initUI()
 
     def initUI(self):
-        page_format = page_formats.get("letter")
-        page_margin_rule = page_rules.get(ElementType.PAGE).get("margin")
- 
-        PAGE_WIDTH = convert_inches_to_pixels(page_format.get("width"))
-        PAGE_HEIGHT = convert_inches_to_pixels(page_format.get("height"))
-        HEADER_HEIGHT = convert_inches_to_pixels(page_margin_rule.get("top", 0))
-       
-        MARGIN_LEFT = convert_inches_to_pixels(page_margin_rule.get("left", 0))
-        MARGIN_RIGHT = convert_inches_to_pixels(page_margin_rule.get("right", 0))
+        page_format = PAGE_FORMATS.get("letter")
+        page_margin_rule = PAGE_RULES.get(ElementType.PAGE).get("margin")
+
+        PAGE_WIDTH = app_state.convert_inches_to_pixels(page_format.get("width"))
+        PAGE_HEIGHT = app_state.convert_inches_to_pixels(page_format.get("height"))
+        HEADER_HEIGHT = app_state.convert_inches_to_pixels(page_margin_rule.get("top", 0))
+
+        MARGIN_LEFT = app_state.convert_inches_to_pixels(page_margin_rule.get("left", 0))
+        MARGIN_RIGHT = app_state.convert_inches_to_pixels(page_margin_rule.get("right", 0))
 
         width = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT
 
@@ -24,7 +27,7 @@ class PageBody(QFrame):
 
         backgroundColor = 'transparent'
 
-        if get_debug_mode(): 
+        if app_state.debug:
             backgroundColor = 'cyan'
 
         self.setStyleSheet(f'background-color: {backgroundColor}')

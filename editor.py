@@ -3,8 +3,8 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QWidget, QTextEdit
 from PyQt5.QtGui import QFont
 
-from constants import *
-from constants import get_dark_mode
+from config import app_state
+from page_rules import PAGE_FORMATS
 
 
 font = QFont('Courier', 12)
@@ -29,7 +29,7 @@ class Editor(QWidget):
         self.container = QWidget(self)
         self.setStyleSheet("background-color: #C8C8C8")
 
-        self.page_format = page_formats.get("letter")
+        self.page_format = PAGE_FORMATS.get("letter")
 
         self.textedit = QTextEdit(self.container)
         self.textedit.setAlignment(QtCore.Qt.AlignTop)
@@ -37,7 +37,7 @@ class Editor(QWidget):
 
         bgColor = '#C8C8C8'
 
-        if get_debug_mode(): 
+        if app_state.debug:
             bgColor = 'green'
 
         self.textedit.setStyleSheet(f"background-color: {bgColor}; padding-left:10; padding-top:10; padding-bottom:10; padding-right:10;")
@@ -57,11 +57,10 @@ class Editor(QWidget):
         self.textedit.setPlainText(self.textedit.toPlainText() + line + "\n")
 
     def getLines(self):
-        trimmed = re.sub(r'\n+', '\n', self.textedit.toPlainText())
-        return trimmed.split('\n')
+        return self.textedit.toPlainText().split('\n')
 
     def applyTheme(self):
-        dark = get_dark_mode()
+        dark = app_state.dark_mode
         if dark:
             bgColor = '#3c3c3c'
             textColor = 'white'

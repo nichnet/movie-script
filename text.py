@@ -1,9 +1,11 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtGui import QFont, QDrag, QPixmap
-from constants import *
-from constants import get_dark_mode
+from PyQt5.QtGui import QFont
 import re
+
+from config import LINE_HEIGHT, app_state
+from elements import ElementType
+from page_rules import PAGE_FORMATS, PAGE_RULES
 
 
 font = QFont('Courier', 12)
@@ -27,7 +29,7 @@ class Text(QLabel):
         self.setWordWrap(True)
         self.setFont(font)
 
-        page_rule = page_rules.get(self.element.get("type"), {})
+        page_rule = PAGE_RULES.get(self.element.get("type"), {})
 
         self.uppercase = page_rule.get("uppercase", False)
         self.bold = page_rule.get("bold", False)
@@ -37,16 +39,16 @@ class Text(QLabel):
         self.updateStyleSheet()
 
 
-        page_content_margin = page_rules.get(ElementType.PAGE).get("margin")#["page"]['margin']
+        page_content_margin = PAGE_RULES.get(ElementType.PAGE).get("margin")#["page"]['margin']
         text_type_margin = page_rule.get("margin", {"left": 0, "right": 0, "top": 0, "bottom": 0})
-        content_width = page_formats.get("letter").get("width") - page_content_margin.get("left", 0) - page_content_margin.get("right", 0)
+        content_width = PAGE_FORMATS.get("letter").get("width") - page_content_margin.get("left", 0) - page_content_margin.get("right", 0)
         
-        x = convert_inches_to_pixels(text_type_margin.get("left", 0) )
-       # self.y = (self.line * LINE_HEIGHT) + convert_inches_to_pixels(text_type_margin.get("top", 0) )
+        x = app_state.convert_inches_to_pixels(text_type_margin.get("left", 0) )
+       # self.y = (self.line * LINE_HEIGHT) + app_state.convert_inches_to_pixels(text_type_margin.get("top", 0) )
        
         # to get this Y position, get the last bottom + the  margin top size
-        self.y = lastBottom + convert_inches_to_pixels(text_type_margin.get("top", 0) )
-        width = convert_inches_to_pixels(content_width - text_type_margin.get("left", 0) - text_type_margin.get("right", 0) )
+        self.y = lastBottom + app_state.convert_inches_to_pixels(text_type_margin.get("top", 0) )
+        width = app_state.convert_inches_to_pixels(content_width - text_type_margin.get("left", 0) - text_type_margin.get("right", 0) )
         self.setFixedWidth(width)
         
 
@@ -77,7 +79,7 @@ class Text(QLabel):
         _type = self.element.get("type")
         
         bgColor = "transparent"
-        if get_debug_mode():
+        if app_state.debug:
             if _type == ElementType.ACTION:
                 bgColor = "green"
             elif _type == ElementType.SCENE:
@@ -102,7 +104,7 @@ class Text(QLabel):
         if self.underline:
             decoration = 'underline'
 
-        textColor = 'white' if get_dark_mode() else 'black'
+        textColor = 'white' if app_state.dark_mode else 'black'
 
         self.setStyleSheet(f"text-decoration: {decoration}; font-weight: {weight}; background-color: {bgColor}; color: {textColor};")
 
@@ -138,15 +140,33 @@ class Text(QLabel):
             header = header.upper()
 
         elif _type == ElementType.SCENE:
-            intext = ""
-            if self.element.get("int", False) == True:
-                intext += "INT - "
-            if self.element.get("ext", False) == True:
-                intext += "EXT - "
+            # Build location prefix (INT., EXT., INT./EXT., EXT./INT.)
+            location_prefix = ""
+            is_int = self.element.get("int", False)
+            is_ext = self.element.get("ext", False)
+            int_first = self.element.get("int_first", True)
 
-#            if self.element.get("show_int_ext", False) == True:
+            if is_int and is_ext:
+                # Combined INT./EXT. or EXT./INT.
+                if int_first:
+                    location_prefix = "INT./EXT. "
+                else:
+                    location_prefix = "EXT./INT. "
+            elif is_int:
+                location_prefix = "INT. "
+            elif is_ext:
+                location_prefix = "EXT. "
+
+            # Build time suffix (appears after scene name)
+            time_suffix = ""
+            time_val = self.element.get("time")
+            if time_val:
+                time_suffix = f" - {time_val}"
+
             scene_num = self.element.get("scene_number", 1)
-            header = f'{scene_num} {intext}'
+            header = f'{scene_num} {location_prefix}'
+            # Time goes after the scene name, scene number on the right
+            v = v + time_suffix
             trailer = f'{scene_num}'
 
 

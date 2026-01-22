@@ -4,8 +4,9 @@ from PyQt5.QtGui import QColor
 from pagebody import PageBody
 from text import Text
 
-from constants import *
-from constants import get_dark_mode
+from config import app_state
+from elements import ElementType
+from page_rules import PAGE_FORMATS, PAGE_RULES
 
 class Page(QFrame):
     def __init__(self, parent, page_number):
@@ -13,13 +14,13 @@ class Page(QFrame):
         self.parent = parent
         self.page_number = page_number
 
-        page_format = page_formats.get("letter")
-        page_margin_rule = page_rules.get(ElementType.PAGE).get("margin")
-        self.PAGE_WIDTH = convert_inches_to_pixels(page_format.get("width"))
-        self.PAGE_HEIGHT = convert_inches_to_pixels(page_format.get("height"))
-        self.HEADER_HEIGHT = convert_inches_to_pixels(page_margin_rule.get("top", 0))
-        self.MARGIN_LEFT = convert_inches_to_pixels(page_margin_rule.get("left", 0))
-        self.MARGIN_RIGHT = convert_inches_to_pixels(page_margin_rule.get("right", 0))
+        page_format = PAGE_FORMATS.get("letter")
+        page_margin_rule = PAGE_RULES.get(ElementType.PAGE).get("margin")
+        self.PAGE_WIDTH = app_state.convert_inches_to_pixels(page_format.get("width"))
+        self.PAGE_HEIGHT = app_state.convert_inches_to_pixels(page_format.get("height"))
+        self.HEADER_HEIGHT = app_state.convert_inches_to_pixels(page_margin_rule.get("top", 0))
+        self.MARGIN_LEFT = app_state.convert_inches_to_pixels(page_margin_rule.get("left", 0))
+        self.MARGIN_RIGHT = app_state.convert_inches_to_pixels(page_margin_rule.get("right", 0))
 
         self.initUI()
 
@@ -32,7 +33,7 @@ class Page(QFrame):
         footerColor = 'transparent'
         bgColor = 'transparent'
 
-        if get_debug_mode():
+        if app_state.debug:
             headerColor = 'green'
             footerColor = 'pink'
             bgColor = 'yellow'
@@ -84,7 +85,7 @@ class Page(QFrame):
         return text
 
     def applyTheme(self):
-        dark = get_dark_mode()
+        dark = app_state.dark_mode
         if dark:
             self.bg.setStyleSheet('background-color: #1e1e1e; border: 1px solid #555;')
         else:
