@@ -93,6 +93,12 @@ def parse_line(line):
         'value': trimmed.strip()
     }
 
+    # Watermark (~)
+    if trimmed.startswith('~'):
+        out['type'] = ElementType.WATERMARK
+        out['value'] = trimmed[1:].strip()
+        return out
+
     # Title page elements: **T, **A, **C, **D
     if trimmed.startswith('**'):
         remainder = trimmed[2:]

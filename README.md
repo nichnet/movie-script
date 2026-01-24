@@ -23,6 +23,8 @@ python main.py --debug
 - Save/Load `.ink` files
 - Export to PDF
 - Dark mode
+- Letter/A4 page sizes
+- Diagonal watermark support
 - Word, scene, and page count
 
 
@@ -71,7 +73,19 @@ python main.py --debug
 | In-script Title | `*` | `*ACT ONE` |
 | Transition | `##` | `##FADE IN` |
 | Dialogue | `@` | `@JOHN "Hello there."` |
+| Watermark | `~` | `~DRAFT` |
 | Action | _(none)_ | `John walks into the room.` |
+
+### Watermark
+Add a diagonal watermark across all pages by starting a line with `~`:
+```
+~DRAFT
+~CONFIDENTIAL
+~FOR YOUR EYES ONLY
+```
+The watermark appears on all pages from that point forward until a new watermark is defined.
+Use an empty `~` to remove the watermark from subsequent pages.
+Toggle watermark visibility in **Document > Show Watermark**.
 
 ### Inline Formatting
 | Tag | Result |
@@ -84,6 +98,7 @@ python main.py --debug
 
 ## Full Example
 ```
+~DRAFT
 **T STAR TREK: THE NEXT GENERATION
 **A Written by
 **A Gene Roddenberry

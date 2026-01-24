@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QFrame, QGraphicsDropShadowEffect
-from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QFrame, QGraphicsDropShadowEffect, QLabel
+from PyQt5.QtGui import QColor, QPainter, QFont, QFontMetrics
+from PyQt5.QtCore import Qt
 
 from pagebody import PageBody
 from text import Text
@@ -8,11 +9,73 @@ from config import app_state
 from elements import ElementType
 from page_rules import PAGE_FORMATS, PAGE_RULES
 
+
+class WatermarkLabel(QLabel):
+    """A label that displays diagonal watermark text."""
+
+    def __init__(self, parent, text=""):
+        super().__init__(parent)
+        self.watermark_text = text
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
+    def set_watermark(self, text):
+        self.watermark_text = text
+        self.update()
+
+    def paintEvent(self, event):
+        if not self.watermark_text or not app_state.show_watermark:
+            return
+
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Calculate diagonal length of the page (this is max text width we can fit)
+        import math
+        diagonal = math.sqrt(self.width() ** 2 + self.height() ** 2)
+
+        # Find font size that makes text span ~70% of the diagonal
+        target_width = diagonal * 0.7
+        font_size = 20  # Start with base size
+
+        font = QFont('Arial', font_size, QFont.Bold)
+        fm = QFontMetrics(font)
+        text_width = fm.horizontalAdvance(self.watermark_text)
+
+        # Scale font size to fit target width
+        if text_width > 0:
+            font_size = int(font_size * (target_width / text_width))
+            font_size = max(40, min(font_size, 200))  # Clamp between 40 and 200
+
+        font = QFont('Arial', font_size, QFont.Bold)
+        painter.setFont(font)
+
+        # Set color - light gray with transparency
+        color = QColor(150, 150, 150, 60)
+        painter.setPen(color)
+
+        # Calculate center and rotate
+        center_x = self.width() // 2
+        center_y = self.height() // 2
+
+        painter.translate(center_x, center_y)
+        painter.rotate(-45)
+
+        # Draw text centered
+        fm = QFontMetrics(font)
+        text_width = fm.horizontalAdvance(self.watermark_text)
+        text_height = fm.height()
+
+        painter.drawText(-text_width // 2, text_height // 4, self.watermark_text)
+        painter.end()
+
+
 class Page(QFrame):
-    def __init__(self, parent, page_number):
+    def __init__(self, parent, page_number, watermark=None):
         super(Page, self).__init__(parent)
         self.parent = parent
         self.page_number = page_number
+        self.watermark_text = watermark
 
         page_format = PAGE_FORMATS.get(app_state.page_size)
         page_margin_rule = PAGE_RULES.get(ElementType.PAGE).get("margin")
@@ -74,6 +137,11 @@ class Page(QFrame):
         self.footer = QFrame(self)
         self.footer.setGeometry(self.MARGIN_LEFT, self.PAGE_HEIGHT - self.HEADER_HEIGHT, width, self.HEADER_HEIGHT)
         self.footer.setStyleSheet(f'background-color: {footerColor}')
+
+        # Watermark (on top of everything)
+        self.watermark_label = WatermarkLabel(self, self.watermark_text or "")
+        self.watermark_label.setGeometry(0, 0, self.PAGE_WIDTH, self.PAGE_HEIGHT)
+        self.watermark_label.raise_()  # Bring to front
 
     
     def add_body_element(self, line, element, lastBottom):

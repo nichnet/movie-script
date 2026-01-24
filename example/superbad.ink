@@ -1,3 +1,4 @@
+~DRAFT
 **T Superbad
 **A Seth Rogen
 **A &
@@ -40,6 +41,7 @@ Evan, seventeen, a little too tall and slim, a boy who clearly never figured out
 
 Seth pulls up in front of a house.
 
+~CONFIDENTIAL
 @Seth"I could tell my parents I’m doing a project on Rome and I have to research orgies."
 
 #E/CONTINUOUS Evan's House
@@ -85,11 +87,13 @@ They walk past DIMITRI (18, big Native American guy) as they enter the store. Di
 
 @EVAN "What the hell’s wrong with Dimitri?"
 
-@seth "Oh, yeah dude, I forgot to tell you. I
-knocked the fuckin’ shit out of him in capture the flag last week."
+@seth "Oh, yeah dude, I forgot to tell you. I knocked the fuckin’ shit out of him in capture the flag last week."
 @evan "Good! 9th Grade Camp he gave me whiplash in "King of the Ring." I fucking hate that guy."
 
 They go to the magazine rack and stare at a Maxim cover.
+
+
+
 
 
 

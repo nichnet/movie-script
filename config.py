@@ -14,6 +14,7 @@ class AppState:
         self._dark_mode = False
         self._dpi = 72
         self._page_size = 'letter'  # 'letter' or 'a4'
+        self._show_watermark = True
 
     @property
     def debug(self):
@@ -46,6 +47,14 @@ class AppState:
     @page_size.setter
     def page_size(self, value):
         self._page_size = value
+
+    @property
+    def show_watermark(self):
+        return self._show_watermark
+
+    @show_watermark.setter
+    def show_watermark(self, value):
+        self._show_watermark = value
 
     def convert_inches_to_pixels(self, inches):
         return int(self._dpi * inches)

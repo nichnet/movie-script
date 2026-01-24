@@ -48,7 +48,15 @@ HELP_TEXT = """
 <tr><td><b>*</b></td><td>In-script title (centered, bold, underlined)</td></tr>
 <tr><td><b>##</b></td><td>Transition (right-aligned, adds colon)</td></tr>
 <tr><td><b>@</b></td><td>Dialogue with speaker</td></tr>
+<tr><td><b>~</b></td><td>Watermark (diagonal text across page)</td></tr>
 </table>
+
+<h3>Watermark</h3>
+<p>Add a diagonal watermark by starting a line with <b>~</b></p>
+<p>Example: <code>~DRAFT</code> or <code>~CONFIDENTIAL</code></p>
+<p>The watermark appears on all pages until a new one is defined.</p>
+<p>Use empty <b>~</b> to remove watermark from subsequent pages.</p>
+<p>Toggle visibility in <b>Document &gt; Show Watermark</b>.</p>
 
 <h3>Dialogue Format</h3>
 <p>Use <b>@Speaker "dialogue text"</b></p>
@@ -67,6 +75,7 @@ HELP_TEXT = """
 
 <h3>Full Example</h3>
 <pre>
+~DRAFT
 **T My Movie Title
 **A Written by
 **A John Smith

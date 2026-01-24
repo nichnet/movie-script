@@ -18,3 +18,5 @@ class ElementType(Enum):
     TITLE_PAGE_AUTHOR = 10
     TITLE_PAGE_COMMENT = 11
     TITLE_PAGE_DATE = 12
+    # Watermark
+    WATERMARK = 13

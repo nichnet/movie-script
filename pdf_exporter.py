@@ -1,5 +1,7 @@
+import math
+
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
-from PyQt5.QtGui import QPainter, QPdfWriter, QPageLayout, QPageSize, QFont, QFontMetrics
+from PyQt5.QtGui import QPainter, QPdfWriter, QPageLayout, QPageSize, QFont, QColor
 from PyQt5.QtCore import QMarginsF, QRectF, Qt
 
 from config import app_state
@@ -53,6 +55,10 @@ def export_to_pdf(parent, pages):
 
         # Draw white background (no border)
         painter.fillRect(QRectF(0, 0, pdf_width, pdf_height), Qt.white)
+
+        # Draw watermark if enabled and page has one
+        if app_state.show_watermark and hasattr(page, 'watermark_text') and page.watermark_text:
+            render_watermark(painter, page.watermark_text, pdf_width, pdf_height)
 
         # Collect all Text widgets from header, body, and footer
         text_widgets = []
@@ -172,3 +178,50 @@ def strip_html(text):
     # Remove all other HTML tags
     text = re.sub(r'<[^>]+>', '', text)
     return text
+
+
+def render_watermark(painter, watermark_text, pdf_width, pdf_height, dpi=300):
+    """Render diagonal watermark text on the PDF page."""
+    painter.save()
+
+    # Calculate physical page diagonal in inches
+    page_width_inches = pdf_width / dpi
+    page_height_inches = pdf_height / dpi
+    diagonal_inches = math.sqrt(page_width_inches ** 2 + page_height_inches ** 2)
+
+    # Target text width is ~70% of diagonal
+    target_width_inches = diagonal_inches * 0.7
+
+    # Estimate font size: assume average char is ~0.6x font size in width
+    # So for N chars at font size S, width ≈ N * 0.6 * S
+    # We want: N * 0.6 * S = target_width_inches * 72 (convert to points)
+    char_count = len(watermark_text)
+    if char_count > 0:
+        font_size = int((target_width_inches * 72) / (char_count * 0.6))
+        font_size = max(48, min(font_size, 180))
+    else:
+        font_size = 100
+
+    font = QFont('Arial', font_size, QFont.Bold)
+    painter.setFont(font)
+
+    # Set color - light gray with transparency
+    color = QColor(150, 150, 150, 60)
+    painter.setPen(color)
+
+    # Calculate center and rotate
+    center_x = pdf_width / 2
+    center_y = pdf_height / 2
+
+    painter.translate(center_x, center_y)
+    painter.rotate(-45)
+
+    # Get actual text dimensions from painter's font metrics
+    fm = painter.fontMetrics()
+    text_width = fm.horizontalAdvance(watermark_text)
+    text_height = fm.height()
+
+    # Draw text centered
+    painter.drawText(int(-text_width / 2), int(text_height / 4), watermark_text)
+
+    painter.restore()

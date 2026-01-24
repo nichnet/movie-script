@@ -80,6 +80,32 @@ class Window(QMainWindow):
         exitAction = QAction('Exit', self)
         fileMenu.addAction(exitAction)
 
+        # Document menu
+        documentMenu = self.menubar.addMenu('Document')
+
+        # Page Size submenu
+        pageSizeMenu = QMenu('Page Size', self)
+        documentMenu.addMenu(pageSizeMenu)
+
+        pageSizeGroup = QActionGroup(self)
+
+        self.letterAction = QAction('Letter', self, checkable=True)
+        self.letterAction.setChecked(True)
+        self.letterAction.triggered.connect(lambda: self.setPageSize('letter'))
+        pageSizeGroup.addAction(self.letterAction)
+        pageSizeMenu.addAction(self.letterAction)
+
+        self.a4Action = QAction('A4', self, checkable=True)
+        self.a4Action.triggered.connect(lambda: self.setPageSize('a4'))
+        pageSizeGroup.addAction(self.a4Action)
+        pageSizeMenu.addAction(self.a4Action)
+
+        # Watermark toggle
+        self.watermarkAction = QAction('Show Watermark', self, checkable=True)
+        self.watermarkAction.setChecked(True)
+        self.watermarkAction.triggered.connect(self.toggleWatermark)
+        documentMenu.addAction(self.watermarkAction)
+
         # View menu
         viewMenu = self.menubar.addMenu('View')
 
@@ -98,23 +124,6 @@ class Window(QMainWindow):
         self.darkModeAction.triggered.connect(lambda: self.setTheme(True))
         modeGroup.addAction(self.darkModeAction)
         modeMenu.addAction(self.darkModeAction)
-
-        # Page Size submenu
-        pageSizeMenu = QMenu('Page Size', self)
-        viewMenu.addMenu(pageSizeMenu)
-
-        pageSizeGroup = QActionGroup(self)
-
-        self.letterAction = QAction('Letter', self, checkable=True)
-        self.letterAction.setChecked(True)
-        self.letterAction.triggered.connect(lambda: self.setPageSize('letter'))
-        pageSizeGroup.addAction(self.letterAction)
-        pageSizeMenu.addAction(self.letterAction)
-
-        self.a4Action = QAction('A4', self, checkable=True)
-        self.a4Action.triggered.connect(lambda: self.setPageSize('a4'))
-        pageSizeGroup.addAction(self.a4Action)
-        pageSizeMenu.addAction(self.a4Action)
 
         # Help menu
         helpMenu = self.menubar.addMenu('Help')
@@ -169,6 +178,10 @@ class Window(QMainWindow):
 
     def setPageSize(self, size):
         app_state.page_size = size
+        self.preview.setContent(self.editor.getLines())
+
+    def toggleWatermark(self, checked):
+        app_state.show_watermark = checked
         self.preview.setContent(self.editor.getLines())
 
     def applyTheme(self):

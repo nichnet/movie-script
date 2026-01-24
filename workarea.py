@@ -82,11 +82,19 @@ class WorkArea(QScrollArea):
         is_on_title_page = False
         title_page_ended = False
         continued_speaker = None  # Track speaker for dialogue continuation
+        current_watermark = None  # Track current watermark text
 
         i = 0
         while i < len(elements):
             element = elements[i]
             _type = element.get("type")
+
+            # Handle watermark elements - update watermark and skip
+            if _type == ElementType.WATERMARK:
+                current_watermark = element.get("value", "")
+                i += 1
+                continue
+
             is_title_page_element = _type in TITLE_PAGE_TYPES
 
             # Check if we're transitioning from title page to regular content
@@ -154,7 +162,7 @@ class WorkArea(QScrollArea):
 
                 current_lines = 0
                 self.lastElement = None
-                self.current_page = Page(self.parent, display_page_num if display_page_num else 0)
+                self.current_page = Page(self.parent, display_page_num if display_page_num else 0, current_watermark)
 
                 # Add page number header only for non-title pages
                 if display_page_num is not None:
