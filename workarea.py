@@ -58,6 +58,8 @@ class WorkArea(QScrollArea):
 
 
     def setContent(self, content):
+        # Save scroll position before rebuilding
+        scroll_pos = self.verticalScrollBar().value()
 
         current_lines = 0
         self.current_page = None
@@ -132,6 +134,9 @@ class WorkArea(QScrollArea):
             current_lines += self.lastElement.get_line_count() + 1
 
         self.setWidget(self.container)
+
+        # Restore scroll position after rebuild
+        self.verticalScrollBar().setValue(scroll_pos)
 
     def applyTheme(self):
         dark = app_state.dark_mode
