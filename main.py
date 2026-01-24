@@ -1,9 +1,9 @@
 import sys
+import ctypes
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QIcon
 from config import app_state
-from window import Window 
-
-#myappid = 'com.nichnet.inkwell.100' # arbitrary string
+from window import Window
 
 win = None
 
@@ -18,12 +18,14 @@ if __name__ == "__main__":
         print("debug mode")
         app_state.debug = True
 
-        #TODO Only works for WIN.
-#    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)  
+    # Set AppUserModelID for Windows taskbar icon
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('com.nichnet.inkwell')
 
     app = QApplication(sys.argv)
 
-    
+    # Set application icon (for taskbar)
+    app.setWindowIcon(QIcon("resources/draw_ink.png"))
+
     init_dpi(app)
 
 #    global win
