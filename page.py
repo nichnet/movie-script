@@ -14,7 +14,7 @@ class Page(QFrame):
         self.parent = parent
         self.page_number = page_number
 
-        page_format = PAGE_FORMATS.get("letter")
+        page_format = PAGE_FORMATS.get(app_state.page_size)
         page_margin_rule = PAGE_RULES.get(ElementType.PAGE).get("margin")
         self.PAGE_WIDTH = app_state.convert_inches_to_pixels(page_format.get("width"))
         self.PAGE_HEIGHT = app_state.convert_inches_to_pixels(page_format.get("height"))

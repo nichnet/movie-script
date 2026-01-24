@@ -99,6 +99,23 @@ class Window(QMainWindow):
         modeGroup.addAction(self.darkModeAction)
         modeMenu.addAction(self.darkModeAction)
 
+        # Page Size submenu
+        pageSizeMenu = QMenu('Page Size', self)
+        viewMenu.addMenu(pageSizeMenu)
+
+        pageSizeGroup = QActionGroup(self)
+
+        self.letterAction = QAction('Letter', self, checkable=True)
+        self.letterAction.setChecked(True)
+        self.letterAction.triggered.connect(lambda: self.setPageSize('letter'))
+        pageSizeGroup.addAction(self.letterAction)
+        pageSizeMenu.addAction(self.letterAction)
+
+        self.a4Action = QAction('A4', self, checkable=True)
+        self.a4Action.triggered.connect(lambda: self.setPageSize('a4'))
+        pageSizeGroup.addAction(self.a4Action)
+        pageSizeMenu.addAction(self.a4Action)
+
         # Help menu
         helpMenu = self.menubar.addMenu('Help')
 
@@ -149,6 +166,10 @@ class Window(QMainWindow):
     def setTheme(self, dark):
         app_state.dark_mode = dark
         self.applyTheme()
+
+    def setPageSize(self, size):
+        app_state.page_size = size
+        self.preview.setContent(self.editor.getLines())
 
     def applyTheme(self):
         if app_state.dark_mode:
@@ -212,3 +233,10 @@ class Window(QMainWindow):
 
     def showAbout(self):
         show_about(self)
+
+    def closeEvent(self, event):
+        """Handle window close - prompt to save unsaved changes."""
+        if self.file_handler._check_unsaved_changes(self, "closing"):
+            event.accept()
+        else:
+            event.ignore()

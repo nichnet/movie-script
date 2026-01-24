@@ -13,6 +13,7 @@ class AppState:
         self._debug = False
         self._dark_mode = False
         self._dpi = 72
+        self._page_size = 'letter'  # 'letter' or 'a4'
 
     @property
     def debug(self):
@@ -37,6 +38,14 @@ class AppState:
     @dpi.setter
     def dpi(self, value):
         self._dpi = value
+
+    @property
+    def page_size(self):
+        return self._page_size
+
+    @page_size.setter
+    def page_size(self, value):
+        self._page_size = value
 
     def convert_inches_to_pixels(self, inches):
         return int(self._dpi * inches)

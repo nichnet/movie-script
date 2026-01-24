@@ -41,7 +41,7 @@ class Text(QLabel):
 
         page_content_margin = PAGE_RULES.get(ElementType.PAGE).get("margin")#["page"]['margin']
         text_type_margin = page_rule.get("margin", {"left": 0, "right": 0, "top": 0, "bottom": 0})
-        content_width = PAGE_FORMATS.get("letter").get("width") - page_content_margin.get("left", 0) - page_content_margin.get("right", 0)
+        content_width = PAGE_FORMATS.get(app_state.page_size).get("width") - page_content_margin.get("left", 0) - page_content_margin.get("right", 0)
         
         x = app_state.convert_inches_to_pixels(text_type_margin.get("left", 0) )
        # self.y = (self.line * LINE_HEIGHT) + app_state.convert_inches_to_pixels(text_type_margin.get("top", 0) )
