@@ -83,6 +83,7 @@ class WorkArea(QScrollArea):
         title_page_ended = False
         continued_speaker = None  # Track speaker for dialogue continuation
         current_watermark = None  # Track current watermark text
+        current_scene_number = 0  # Track current scene number for continuation
 
         i = 0
         while i < len(elements):
@@ -143,12 +144,20 @@ class WorkArea(QScrollArea):
 
             # Track if we need to add (CONT'D) to the next dialogue's speaker
             add_contd_to_next = False
+            # Track if we need to add scene continuation at top of new page
+            add_scene_continued = False
 
             if need_new_page:
                 # Add (MORE) marker only if same speaker's dialogue continues
                 if continued_speaker is not None and self.lastElement is not None:
                     self._add_more_marker(current_lines)
                     add_contd_to_next = True
+
+                # Add (CONTINUED) marker if scene continues to next page
+                # Only add if we're mid-scene and the next element is NOT a new scene
+                if current_scene_number > 0 and _type != ElementType.SCENE and self.lastElement is not None:
+                    self._add_scene_continued_marker(current_lines)
+                    add_scene_continued = True
 
                 title_page_ended = False
 
@@ -171,6 +180,16 @@ class WorkArea(QScrollArea):
                 self.pages.append(self.current_page)
                 self.vbox.addWidget(self.current_page)
 
+                # Add CONTINUED: marker at top of page if scene continues from previous page
+                if add_scene_continued:
+                    continued_element = {
+                        "type": ElementType.SCENE_CONTINUED,
+                        "scene_number": current_scene_number,
+                        "value": ""
+                    }
+                    self.lastElement = self.current_page.add_body_element(current_lines, continued_element, 0)
+                    current_lines += 2  # Account for the continued marker
+
             # Add (CONT'D) to speaker name if continuing from previous page
             if add_contd_to_next and _type == ElementType.DIALOGUE:
                 speaker = element.get("speaker", "")
@@ -183,6 +202,7 @@ class WorkArea(QScrollArea):
             if _type == ElementType.SCENE:
                 scene_count += 1
                 element['scene_number'] = scene_count
+                current_scene_number = scene_count
 
             if _type == ElementType.ACTION or _type == ElementType.SCENE or _type == ElementType.DIALOGUE:
                 current_lines += 1
@@ -296,6 +316,18 @@ class WorkArea(QScrollArea):
             "value": "(MORE)"
         }
         self.current_page.add_body_element(current_lines, more_element, lastBottom)
+
+    def _add_scene_continued_marker(self, current_lines):
+        """Add (CONTINUED) marker at bottom of page when scene continues."""
+        lastBottom = 0
+        if self.lastElement is not None:
+            lastBottom = self.lastElement.getBottom()
+
+        continued_element = {
+            "type": ElementType.TRANSITION,
+            "value": "(CONTINUED)"
+        }
+        self.current_page.add_body_element(current_lines, continued_element, lastBottom)
 
     def applyTheme(self):
         dark = app_state.dark_mode

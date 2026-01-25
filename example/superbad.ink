@@ -1,12 +1,12 @@
 ~DRAFT
-**T Superbad
+**T Super Bad
 **A Seth Rogen
 **A &
 **A Evan Goldberg
 **D July 20, 2006
 **C <b>THIS MATERIAL IS THE PROPERTY OF SONY PICTURES ENTERTAINMENT</b> INC., OR IT’S AFFILIATES (COLLECTIVELY SPE) AND IS INTENDED AND RESTRICTED SOLELY TO SPE PERSONNEL AND INDIVIDUALS UNDERCONTRACT TO, OR IS CONTEMPLATED WILL ENTER INTO A CONTRACT WITH SPE DISTRIBUTION OR DISCLOSURE OF THE MATERIAL TO UNAUTHORIZED PERSONS, OR THE SALE, COPYING OR REPRODUCTION OF THIS MATERIAL IN ANY FORM IS PROHIBITED
 
-* Superbad
+* Super Bad
 OPENING CREDITS OVER SUPER-FUNKY BLAXPLOITATION-STYLE MUSIC, which builds to an exciting crescendo filling us with the expectation of a thrilling, action-packed opening sequence.
 
 ##Instead we get
@@ -91,6 +91,7 @@ They walk past DIMITRI (18, big Native American guy) as they enter the store. Di
 @evan "Good! 9th Grade Camp he gave me whiplash in "King of the Ring." I fucking hate that guy."
 
 They go to the magazine rack and stare at a Maxim cover.
+
 
 
 

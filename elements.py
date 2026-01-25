@@ -20,3 +20,5 @@ class ElementType(Enum):
     TITLE_PAGE_DATE = 12
     # Watermark
     WATERMARK = 13
+    # Scene continuation
+    SCENE_CONTINUED = 14

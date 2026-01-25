@@ -121,4 +121,11 @@ PAGE_RULES = {
         },
         "align": "right",
     },
+    ElementType.SCENE_CONTINUED: {
+        "uppercase": True,
+        "bold": True,
+        "margin": {
+            "top": 0
+        }
+    },
 }

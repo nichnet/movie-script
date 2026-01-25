@@ -125,7 +125,9 @@ class Text(QLabel):
         trailer = ""
 
         if _type == ElementType.TRANSITION:
-            trailer = ":" 
+            # Don't add colon for (CONTINUED) marker
+            if not v.startswith("("):
+                trailer = ":" 
         elif _type == ElementType.DIALOGUE:
             #character name
             speaker = self.element.get("speaker", "")
@@ -169,13 +171,20 @@ class Text(QLabel):
             v = v + time_suffix
             trailer = f'{scene_num}'
 
+        elif _type == ElementType.SCENE_CONTINUED:
+            # Scene continuation at top of page: "2    CONTINUED:    2"
+            scene_num = self.element.get("scene_number", 1)
+            header = f'{scene_num} '
+            v = "CONTINUED:"
+            trailer = f'{scene_num}'
+
 
         #Allow bold, underline, break, and italic but no other HTML tags
         html_tags_to_keep = ['u', 'b', 'br', 'i', 'table', 'tr', 'td']
         regex = re.compile(r'<(?!\/?(%s)\s*>)\/?.*?>' % '|'.join(html_tags_to_keep), re.IGNORECASE)
         v = regex.sub('', v)
 
-        if _type == ElementType.SCENE:
+        if _type == ElementType.SCENE or _type == ElementType.SCENE_CONTINUED:
             self.setText(f'<table width="100%"><tr><td>{header}{v}</td><td align="right">{trailer}</td></tr></table>')
         else:
             self.setText(header + v + trailer)
